@@ -7,6 +7,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 
 from custom_components.busybar.config_flow import (
     BusyBarApiDisabled,
@@ -68,7 +69,23 @@ async def test_user_flow_api_disabled(hass: HomeAssistant) -> None:
     assert result["errors"] == {"base": "api_disabled"}
 
 
-async def test_validate_input_uses_serial_and_name() -> None:
+async def test_dhcp_discovery_shows_confirmation_form(hass: HomeAssistant) -> None:
+    """DHCP discoveries route through a real, submit-capable flow step."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_DHCP},
+        data=DhcpServiceInfo(
+            ip="192.168.1.50",
+            hostname="busybar",
+            macaddress="0cfa22aabbcc",
+        ),
+    )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "discovery_confirm"
+
+
+async def test_validate_input_uses_serial_and_name(hass: HomeAssistant) -> None:
     """Hardware identity—not a changing DHCP address—is used as unique ID."""
     from custom_components.busybar.config_flow import async_validate_input
 
@@ -86,7 +103,7 @@ async def test_validate_input_uses_serial_and_name() -> None:
     api.aclose = AsyncMock()
 
     with patch("custom_components.busybar.config_flow.AsyncBusyBar", return_value=api):
-        info = await async_validate_input("http://192.168.1.50/", "")
+        info = await async_validate_input(hass, "http://192.168.1.50/", "")
 
     assert info.unique_id == "203638485431500400123456"
     assert info.title == "Office Bar"

@@ -13,7 +13,7 @@ from typing import Any
 from uuid import uuid4
 
 type DisplayPayload = dict[str, Any]
-type DrawCallback = Callable[[DisplayPayload], Awaitable[None]]
+type DrawCallback = Callable[[DisplayPayload, bool], Awaitable[None]]
 type ClearCallback = Callable[[], Awaitable[None]]
 type TaskFactory = Callable[[Coroutine[Any, Any, None], str], asyncio.Task[None]]
 
@@ -101,7 +101,7 @@ class BusyBarDisplayManager:
                     next_active.layer_id != previous_active
                     or next_active.layer_id == layer_id
                 ):
-                    await self._render(next_active)
+                    await self._render(next_active, replace=True)
                     self._active_layer_id = next_active.layer_id
             except Exception:
                 self._layers = previous_layers
@@ -130,7 +130,10 @@ class BusyBarDisplayManager:
                 next_active.layer_id != self._active_layer_id
                 or next_active.layer_id == layer_id
             ):
-                await self._render(next_active)
+                await self._render(
+                    next_active,
+                    replace=next_active.layer_id != self._active_layer_id,
+                )
                 self._active_layer_id = next_active.layer_id
             self._reschedule_expiry()
 
@@ -187,17 +190,17 @@ class BusyBarDisplayManager:
             await self._clear()
             self._active_layer_id = None
             return
-        await self._render(next_active)
+        await self._render(next_active, replace=True)
         self._active_layer_id = next_active.layer_id
 
-    async def _render(self, layer: DisplayLayer) -> None:
+    async def _render(self, layer: DisplayLayer, *, replace: bool) -> None:
         payload = deepcopy(layer.payload)
         if (remaining := layer.remaining) is not None:
             timeout = max(1, math.ceil(remaining))
             for element in payload.get("elements", []):
                 if isinstance(element, dict):
                     element["timeout"] = timeout
-        await self._draw(payload)
+        await self._draw(payload, replace)
 
     def _reschedule_expiry(self) -> None:
         self._cancel_expiry()

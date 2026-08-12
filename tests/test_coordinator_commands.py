@@ -1,10 +1,12 @@
 """Tests for coordinator command helpers that protect device resources."""
 
+import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from busylib.exceptions import BusyBarAPIError
 
+from custom_components.busybar.const import APPLICATION_NAME
 from custom_components.busybar.coordinator import BusyBarCoordinator
 
 
@@ -78,3 +80,22 @@ async def test_stopping_finished_audio_is_idempotent() -> None:
         )
     )
     await coordinator.async_stop_sound()
+
+
+async def test_draw_replaces_only_home_assistant_owned_content() -> None:
+    """A layer change never invokes busylib's unscoped global clear path."""
+    coordinator = _bare_coordinator()
+    coordinator._draw_lock = asyncio.Lock()
+    coordinator.api.display_clear = AsyncMock(return_value=object())
+    coordinator.api.display_draw = AsyncMock(return_value=object())
+
+    payload = {"priority": 50, "elements": []}
+    await coordinator._async_draw_immediate(payload, True)
+    await coordinator._async_draw_immediate(payload, False)
+
+    coordinator.api.display_clear.assert_awaited_once_with(
+        application_name=APPLICATION_NAME
+    )
+    assert coordinator.api.display_draw.await_count == 2
+    for call in coordinator.api.display_draw.await_args_list:
+        assert call.kwargs["clear_before_draw"] is False

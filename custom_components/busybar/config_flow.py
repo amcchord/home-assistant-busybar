@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 from typing import Any
 
 import voluptuous as vol
@@ -15,7 +16,7 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.const import CONF_HOST
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.selector import (
     NumberSelector,
     NumberSelectorConfig,
@@ -70,10 +71,14 @@ def _normalize_host(host: str) -> str:
     return value.split("/", 1)[0]
 
 
-async def async_validate_input(host: str, token: str = "") -> DiscoveredDevice:
+async def async_validate_input(
+    hass: HomeAssistant, host: str, token: str = ""
+) -> DiscoveredDevice:
     """Validate local access and collect stable identity."""
     host = _normalize_host(host)
-    api = AsyncBusyBar(host, token=token or None)
+    api = await hass.async_add_executor_job(
+        partial(AsyncBusyBar, host, token=token or None)
+    )
     try:
         try:
             access = await api.access()
@@ -149,7 +154,9 @@ class BusyBarConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 info = await async_validate_input(
-                    user_input[CONF_HOST], user_input.get(CONF_TOKEN, "")
+                    self.hass,
+                    user_input[CONF_HOST],
+                    user_input.get(CONF_TOKEN, ""),
                 )
             except BusyBarApiDisabled:
                 errors["base"] = "api_disabled"
@@ -193,6 +200,12 @@ class BusyBarConfigFlow(ConfigFlow, domain=DOMAIN):
         }
         return await self._async_step_setup("discovery_confirm", None)
 
+    async def async_step_discovery_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Confirm a BUSY Bar found through DHCP or zeroconf."""
+        return await self._async_step_setup("discovery_confirm", user_input)
+
     async def async_step_reauth(self, entry_data: dict[str, Any]) -> ConfigFlowResult:
         """Handle reauthentication."""
         self._discovered_host = entry_data[CONF_HOST]
@@ -207,7 +220,9 @@ class BusyBarConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 info = await async_validate_input(
-                    entry.data[CONF_HOST], user_input.get(CONF_TOKEN, "")
+                    self.hass,
+                    entry.data[CONF_HOST],
+                    user_input.get(CONF_TOKEN, ""),
                 )
             except BusyBarApiDisabled:
                 errors["base"] = "api_disabled"
@@ -242,7 +257,9 @@ class BusyBarConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 info = await async_validate_input(
-                    user_input[CONF_HOST], user_input.get(CONF_TOKEN, "")
+                    self.hass,
+                    user_input[CONF_HOST],
+                    user_input.get(CONF_TOKEN, ""),
                 )
             except BusyBarApiDisabled:
                 errors["base"] = "api_disabled"

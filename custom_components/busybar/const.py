@@ -8,7 +8,7 @@ from homeassistant.const import Platform
 
 DOMAIN: Final = "busybar"
 NAME: Final = "BUSY Bar"
-VERSION: Final = "0.2.0"
+VERSION: Final = "0.2.1"
 MANUFACTURER: Final = "BUSY"
 APPLICATION_NAME: Final = "home_assistant"
 EVENT_BUSYBAR: Final = "busybar_event"
