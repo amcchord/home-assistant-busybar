@@ -23,6 +23,7 @@ def test_manifest_contract() -> None:
     assert manifest["dependencies"] == ["http"]
     assert manifest["requirements"] == ["busylib==1.3.0", "segno==1.6.6"]
     assert manifest["version"] == VERSION
+    assert (COMPONENT / "brand" / "icon.png").is_file()
 
 
 def test_strings_and_translation_have_same_topology() -> None:
