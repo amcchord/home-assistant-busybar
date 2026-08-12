@@ -20,6 +20,7 @@ def test_manifest_contract() -> None:
     assert manifest["domain"] == "busybar"
     assert manifest["config_flow"] is True
     assert manifest["iot_class"] == "local_push"
+    assert manifest["dependencies"] == ["http"]
     assert manifest["requirements"] == ["busylib==1.3.0", "segno==1.6.6"]
     assert manifest["version"] == VERSION
 
