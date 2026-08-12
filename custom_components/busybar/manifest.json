@@ -3,12 +3,12 @@
   "name": "BUSY Bar",
   "codeowners": ["@amcchord"],
   "config_flow": true,
+  "dependencies": ["http"],
   "dhcp": [
     {
       "macaddress": "0CFA22*"
     }
   ],
-  "dependencies": ["http"],
   "documentation": "https://github.com/amcchord/home-assistant-busybar",
   "integration_type": "device",
   "iot_class": "local_push",
