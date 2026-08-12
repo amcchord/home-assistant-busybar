@@ -5,6 +5,7 @@ show_message:
       selector:
         device:
           integration: busybar
+          multiple: true
     message:
       required: true
       example: "Dinner is ready!"
@@ -81,6 +82,24 @@ play_effect:
             - scanner
             - confetti
             - breathe
+            - aurora
+            - fireplace
+            - lava_lamp
+            - ocean_waves
+            - starfield
+            - matrix_rain
+            - snowfall
+            - sunrise
+            - equalizer
+            - fireworks
+            - jackpot
+            - thunderstorm
+            - red_alert
+            - heartbeat
+            - sparkle
+            - package_drop
+            - laundry_party
+            - goal
     color: *color
     message:
       example: "YAY!"
@@ -97,6 +116,43 @@ play_effect:
           mode: slider
     duration:
       default: 5
+      selector:
+        number:
+          min: 0.5
+          max: 30
+          step: 0.5
+          unit_of_measurement: s
+          mode: slider
+
+play_preset:
+  fields:
+    device_id: *device
+    preset:
+      required: true
+      default: celebration
+      selector:
+        select:
+          options:
+            - someone_is_here
+            - package_delivered
+            - laundry_done
+            - dinner_ready
+            - meeting_soon
+            - weather_warning
+            - air_quality_warning
+            - alarm
+            - welcome_home
+            - bedtime
+            - chore_complete
+            - focus_break
+            - goal_scored
+            - print_complete
+            - celebration
+    message:
+      selector:
+        text:
+    priority: *priority
+    duration:
       selector:
         number:
           min: 0.5
@@ -162,3 +218,257 @@ draw:
       default: false
       selector:
         boolean:
+
+show_widget:
+  fields:
+    device_id: *device
+    widget:
+      required: true
+      selector:
+        select:
+          options:
+            - message
+            - entity
+            - weather
+            - calendar
+            - countdown
+            - clock
+            - progress
+            - chart
+            - alert
+            - streak
+            - scoreboard
+    title:
+      selector:
+        text:
+    value:
+      selector:
+        text:
+    unit:
+      selector:
+        text:
+    timestamp:
+      selector:
+        text:
+    values:
+      selector:
+        object:
+    progress:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+    color: *color
+    background: *background
+    display:
+      default: front
+      selector:
+        select:
+          options:
+            - front
+            - back
+    priority: *priority
+    duration: *duration
+    led_color:
+      selector:
+        color_rgb:
+    restore:
+      default: true
+      selector:
+        boolean:
+    layer_id:
+      selector:
+        text:
+
+play_sound:
+  fields:
+    device_id: *device
+    path:
+      selector:
+        text:
+    stock_path:
+      selector:
+        text:
+
+stop_sound:
+  fields:
+    device_id: *device
+
+set_profile:
+  fields:
+    device_id: *device
+    slot:
+      required: true
+      selector:
+        select:
+          options:
+            - busy
+            - custom
+    title:
+      required: true
+      selector:
+        text:
+    timer_type:
+      required: true
+      selector:
+        select:
+          options:
+            - infinite
+            - simple
+            - interval
+    minutes:
+      default: 25
+      selector:
+        number:
+          min: 1
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+    work_minutes:
+      default: 25
+      selector:
+        number:
+          min: 1
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+    rest_minutes:
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+    cycles:
+      default: 4
+      selector:
+        number:
+          min: 1
+          max: 99
+          mode: box
+    autostart:
+      default: false
+      selector:
+        boolean:
+    theme:
+      default: busy
+      selector:
+        text:
+    show_work_only:
+      default: true
+      selector:
+        boolean:
+    trigger_smart_home:
+      default: true
+      selector:
+        boolean:
+
+check_update:
+  fields:
+    device_id: *device
+
+abort_update:
+  fields:
+    device_id: *device
+
+play_game:
+  fields:
+    device_id: *device
+    game:
+      required: true
+      selector:
+        select:
+          options:
+            - dice
+            - coin_flip
+            - magic_8_ball
+            - reaction
+            - pong
+            - snake
+            - pixel_pet
+    duration:
+      default: 30
+      selector:
+        number:
+          min: 2
+          max: 600
+          step: 1
+          unit_of_measurement: s
+    fps:
+      default: 8
+      selector:
+        number:
+          min: 2
+          max: 12
+          step: 1
+    mood:
+      default: happy
+      selector:
+        select:
+          options:
+            - happy
+            - sleepy
+            - excited
+            - sad
+            - busy
+            - cool
+    priority: *priority
+
+stop_game:
+  fields:
+    device_id: *device
+
+show_media:
+  fields:
+    device_id: *device
+    media_content_id:
+      required: true
+      selector:
+        media:
+    display:
+      default: front
+      selector:
+        select:
+          options:
+            - front
+            - back
+    duration: *duration
+    priority: *priority
+    loop:
+      default: true
+      selector:
+        boolean:
+    opacity:
+      default: 100
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+
+play_media:
+  fields:
+    device_id: *device
+    media_content_id:
+      required: true
+      selector:
+        media:
+
+show_qr:
+  fields:
+    device_id: *device
+    value:
+      required: true
+      selector:
+        text:
+          multiline: true
+    duration: *duration
+    priority: *priority
+
+delete_assets:
+  fields:
+    device_id: *device

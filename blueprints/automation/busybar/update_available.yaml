@@ -1,0 +1,34 @@
+blueprint:
+  name: BUSY Bar — Firmware update celebration
+  description: Show a gentle notification when new BUSY Bar firmware becomes available.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    update_entity:
+      name: BUSY Bar firmware update entity
+      selector:
+        entity:
+          domain: update
+
+triggers:
+  - trigger: state
+    entity_id: !input update_entity
+    to: "on"
+
+actions:
+  - action: busybar.show_widget
+    data:
+      device_id: !input busybar_device
+      widget: entity
+      title: "FIRMWARE"
+      value: "UPDATE READY"
+      color: [167, 139, 250]
+      duration: 30
+      priority: 40
+      restore: true
+
+mode: single

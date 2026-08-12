@@ -18,11 +18,16 @@ jobs:
         with:
           python-version: "3.14"
           cache: pip
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
       - name: Install test dependencies
         run: pip install -r requirements_test.txt
       - name: Ruff lint
         run: ruff check .
       - name: Ruff format
         run: ruff format --check .
+      - name: Dashboard card syntax
+        run: deno check custom_components/busybar/www/busybar-card.js
       - name: Tests
         run: pytest --cov --cov-report=term-missing --cov-report=xml

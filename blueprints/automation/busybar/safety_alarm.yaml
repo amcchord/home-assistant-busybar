@@ -1,0 +1,36 @@
+blueprint:
+  name: BUSY Bar — Safety alarm
+  description: Override the display with a priority-100 alarm for smoke, CO, water, or another critical sensor.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    alarm_sensor:
+      name: Alarm sensor
+      selector:
+        entity:
+          domain: binary_sensor
+    message:
+      name: Message
+      default: "ALARM"
+      selector:
+        text:
+
+triggers:
+  - trigger: state
+    entity_id: !input alarm_sensor
+    to: "on"
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: alarm
+      message: !input message
+      priority: 100
+      duration: 20
+
+mode: restart

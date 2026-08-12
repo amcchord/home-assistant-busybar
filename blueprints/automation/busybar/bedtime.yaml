@@ -1,0 +1,43 @@
+blueprint:
+  name: BUSY Bar — Bedtime wind-down
+  description: Play a quiet starfield and optionally activate a Home Assistant bedtime scene.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    bedtime:
+      name: Bedtime
+      default: "22:30:00"
+      selector:
+        time:
+    bedtime_scene:
+      name: Bedtime scene (optional)
+      default:
+      selector:
+        entity:
+          domain: scene
+
+triggers:
+  - trigger: time
+    at: !input bedtime
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: bedtime
+  - if:
+      - condition: template
+        value_template: "{{ bedtime_scene | default('') != '' }}"
+    then:
+      - action: scene.turn_on
+        target:
+          entity_id: !input bedtime_scene
+
+variables:
+  bedtime_scene: !input bedtime_scene
+
+mode: single

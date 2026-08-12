@@ -1,6 +1,7 @@
 """Tests for generated display compositions."""
 
 import pytest
+from busylib import types
 
 from custom_components.busybar.const import EFFECTS, SCENES
 from custom_components.busybar.effects import (
@@ -67,6 +68,14 @@ def test_all_effects_are_bounded(effect: str) -> None:
     assert len(frames) == 4
     assert all(frame["priority"] == 50 for frame in frames)
     assert all(frame["application_name"] == "home_assistant" for frame in frames)
+    for frame in frames:
+        model = types.DisplayElements.model_validate(frame)
+        assert all(
+            element.x + element.width <= 72 and element.y + element.height <= 16
+            for element in model.elements
+            if getattr(element, "width", None) is not None
+            and getattr(element, "height", None) is not None
+        )
 
 
 def test_unknown_effect_is_rejected() -> None:

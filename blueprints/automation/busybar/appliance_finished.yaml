@@ -1,0 +1,47 @@
+blueprint:
+  name: BUSY Bar — Appliance finished
+  description: Celebrate when a washer, dryer, dishwasher, or other binary sensor turns off.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    appliance:
+      name: Running sensor
+      selector:
+        entity:
+          domain: binary_sensor
+    label:
+      name: Message
+      default: "LAUNDRY DONE!"
+      selector:
+        text:
+    effect:
+      name: Celebration
+      default: laundry_party
+      selector:
+        select:
+          options:
+            - laundry_party
+            - confetti
+            - sparkle
+            - fireworks
+
+triggers:
+  - trigger: state
+    entity_id: !input appliance
+    from: "on"
+    to: "off"
+
+actions:
+  - action: busybar.play_effect
+    data:
+      device_id: !input busybar_device
+      effect: !input effect
+      message: !input label
+      duration: 10
+      priority: 70
+
+mode: single
