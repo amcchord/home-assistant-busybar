@@ -1,0 +1,28 @@
+blueprint:
+  name: BUSY Bar — Physical focus mode
+  description: Use the BUSY position on the physical switch to activate a Home Assistant scene.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    focus_scene:
+      name: Focus scene
+      selector:
+        entity:
+          domain: scene
+
+triggers:
+  - trigger: device
+    domain: busybar
+    device_id: !input busybar_device
+    type: switch_busy
+
+actions:
+  - action: scene.turn_on
+    target:
+      entity_id: !input focus_scene
+
+mode: restart

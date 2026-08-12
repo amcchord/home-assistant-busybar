@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="BUSY Bar for Home Assistant pixel icon">
+  <defs>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172554"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="pixels" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.52" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#f472b6"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="58" fill="url(#shell)"/>
+  <rect x="30" y="72" width="196" height="112" rx="28" fill="#0f172a" stroke="#334155" stroke-width="8"/>
+  <circle cx="204" cy="55" r="13" fill="#4ade80"/>
+  <g fill="url(#pixels)">
+    <rect x="54" y="96" width="20" height="20" rx="4"/>
+    <rect x="78" y="96" width="20" height="20" rx="4"/>
+    <rect x="102" y="96" width="20" height="20" rx="4"/>
+    <rect x="126" y="96" width="20" height="20" rx="4"/>
+    <rect x="150" y="96" width="20" height="20" rx="4"/>
+    <rect x="174" y="96" width="20" height="20" rx="4"/>
+    <rect x="54" y="120" width="20" height="20" rx="4"/>
+    <rect x="78" y="120" width="20" height="20" rx="4"/>
+    <rect x="102" y="120" width="20" height="20" rx="4"/>
+    <rect x="126" y="120" width="20" height="20" rx="4"/>
+    <rect x="150" y="120" width="20" height="20" rx="4"/>
+    <rect x="174" y="120" width="20" height="20" rx="4"/>
+    <rect x="54" y="144" width="20" height="20" rx="4"/>
+    <rect x="78" y="144" width="20" height="20" rx="4"/>
+    <rect x="102" y="144" width="20" height="20" rx="4"/>
+    <rect x="126" y="144" width="20" height="20" rx="4"/>
+    <rect x="150" y="144" width="20" height="20" rx="4"/>
+    <rect x="174" y="144" width="20" height="20" rx="4"/>
+  </g>
+  <path d="M78 95h25c20 0 30 10 30 25 0 8-4 15-11 19 10 4 16 11 16 22 0 17-13 27-34 27H78V95zm23 37c8 0 12-3 12-9s-4-9-12-9h-3v18h3zm3 37c9 0 14-3 14-10s-5-10-14-10h-6v20h6z" fill="#f8fafc" transform="translate(20 -14)"/>
+</svg>

@@ -57,6 +57,7 @@ BINARY_SENSORS = (
         key="update_available",
         translation_key="update_available",
         device_class=BinarySensorDeviceClass.UPDATE,
+        entity_registry_enabled_default=False,
         value_fn=lambda data: bool(data.snapshot.update_available_version),
     ),
 )

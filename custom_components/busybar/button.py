@@ -61,6 +61,36 @@ BUTTONS = (
         entity_category=EntityCategory.CONFIG,
         press_fn=lambda coordinator: coordinator.async_clear(),
     ),
+    BusyBarButtonDescription(
+        key="check_update",
+        translation_key="check_update",
+        icon="mdi:update",
+        entity_category=EntityCategory.CONFIG,
+        press_fn=lambda coordinator: coordinator.async_check_update(),
+    ),
+    BusyBarButtonDescription(
+        key="abort_update",
+        translation_key="abort_update",
+        icon="mdi:download-off",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+        press_fn=lambda coordinator: coordinator.async_abort_update(),
+    ),
+    BusyBarButtonDescription(
+        key="start_smart_home_pairing",
+        translation_key="start_smart_home_pairing",
+        icon="mdi:qrcode-scan",
+        entity_category=EntityCategory.CONFIG,
+        press_fn=lambda coordinator: coordinator.async_start_smart_home_pairing(),
+    ),
+    BusyBarButtonDescription(
+        key="stop_smart_home_pairing",
+        translation_key="stop_smart_home_pairing",
+        icon="mdi:link-off",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+        press_fn=lambda coordinator: coordinator.async_stop_smart_home_pairing(),
+    ),
 )
 
 

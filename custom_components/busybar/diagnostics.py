@@ -37,6 +37,23 @@ async def async_get_config_entry_diagnostics(
             "timer": coordinator.data.timer.model_dump(mode="json")
             if coordinator.data.timer
             else None,
+            "profiles": {
+                slot: profile.model_dump(mode="json")
+                for slot, profile in coordinator.data.profiles.items()
+            },
+            "update_status": coordinator.data.update_status.model_dump(mode="json")
+            if coordinator.data.update_status
+            else None,
+            "automatic_updates": coordinator.data.autoupdate.model_dump(mode="json")
+            if coordinator.data.autoupdate
+            else None,
+            "smart_home": coordinator.data.smart_home.model_dump(mode="json")
+            if coordinator.data.smart_home
+            else None,
+            "display_manager": {
+                "active_layer_id": coordinator.display_manager.active_layer_id,
+                "layer_count": coordinator.display_manager.layer_count,
+            },
             "last_update_success": coordinator.last_update_success,
         },
         TO_REDACT,

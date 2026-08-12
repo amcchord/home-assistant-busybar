@@ -1,0 +1,42 @@
+blueprint:
+  name: BUSY Bar — Air quality warning
+  description: Show an air-quality warning when a numeric sensor crosses your threshold.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    air_quality_sensor:
+      name: Air quality sensor
+      selector:
+        entity:
+          domain: sensor
+    threshold:
+      name: Warning threshold
+      default: 100
+      selector:
+        number:
+          min: 1
+          max: 500
+          step: 1
+    message:
+      name: Message
+      default: "AIR QUALITY"
+      selector:
+        text:
+
+triggers:
+  - trigger: numeric_state
+    entity_id: !input air_quality_sensor
+    above: !input threshold
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: air_quality_warning
+      message: !input message
+
+mode: restart

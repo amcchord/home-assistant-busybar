@@ -1,0 +1,44 @@
+blueprint:
+  name: BUSY Bar — Next meeting countdown
+  description: Show a local countdown five minutes before a Home Assistant calendar event.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    calendar:
+      name: Calendar
+      selector:
+        entity:
+          domain: calendar
+    priority:
+      name: Display priority
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
+
+triggers:
+  - trigger: calendar
+    entity_id: !input calendar
+    event: start
+    offset: "-00:05:00"
+
+actions:
+  - action: busybar.show_widget
+    data:
+      device_id: !input busybar_device
+      widget: countdown
+      title: "{{ trigger.calendar_event.summary }}"
+      timestamp: "{{ trigger.calendar_event.start }}"
+      color: [56, 189, 248]
+      background: [8, 47, 73]
+      duration: 300
+      priority: !input priority
+      restore: true
+
+mode: restart

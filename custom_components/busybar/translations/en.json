@@ -15,7 +15,10 @@
       "user": {
         "title": "Connect to a BUSY Bar",
         "description": "Connects directly over your local network—no BUSY cloud account is needed.",
-        "data": {"host": "Host", "token": "Local API key"},
+        "data": {
+          "host": "Host",
+          "token": "Local API key"
+        },
         "data_description": {
           "host": "The BUSY Bar IP address or hostname, such as 192.168.1.50.",
           "token": "Optional 4–10 digit key from the BUSY Bar's HTTP API settings. Leave blank when Wi-Fi access is simply On."
@@ -24,35 +27,395 @@
       "discovery_confirm": {
         "title": "Set up discovered BUSY Bar",
         "description": "A BUSY Bar was found at {host}. Confirm its address and enter the local API key only if key mode is enabled.",
-        "data": {"host": "Host", "token": "Local API key"},
-        "data_description": {"host": "The discovered local address.", "token": "Optional 4–10 digit key from the BUSY Bar's HTTP API settings."}
+        "data": {
+          "host": "Host",
+          "token": "Local API key"
+        },
+        "data_description": {
+          "host": "The discovered local address.",
+          "token": "Optional 4–10 digit key from the BUSY Bar's HTTP API settings."
+        }
       },
-      "reauth_confirm": {"title": "Update local API access", "description": "Enter the current local API key. Leave it blank when access mode is On.", "data": {"token": "Local API key"}},
-      "reconfigure": {"title": "Reconfigure BUSY Bar", "data": {"host": "Host", "token": "Local API key"}, "data_description": {"host": "The BUSY Bar IP address or hostname.", "token": "Optional 4–10 digit key."}}
+      "reauth_confirm": {
+        "title": "Update local API access",
+        "description": "Enter the current local API key. Leave it blank when access mode is On.",
+        "data": {
+          "token": "Local API key"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure BUSY Bar",
+        "data": {
+          "host": "Host",
+          "token": "Local API key"
+        },
+        "data_description": {
+          "host": "The BUSY Bar IP address or hostname.",
+          "token": "Optional 4–10 digit key."
+        }
+      }
     }
   },
-  "options": {"step": {"init": {"title": "BUSY Bar options", "data": {"default_priority": "Default display priority", "scan_interval": "Polling interval"}, "data_description": {"default_priority": "Built-in apps use priority 10 and an active BUSY session uses 90. Keep 50 to avoid interrupting focus sessions.", "scan_interval": "Fallback refresh interval in seconds; live updates also arrive over the local WebSocket."}}}},
+  "options": {
+    "step": {
+      "init": {
+        "title": "BUSY Bar options",
+        "data": {
+          "default_priority": "Default display priority",
+          "scan_interval": "Polling interval"
+        },
+        "data_description": {
+          "default_priority": "Built-in apps use priority 10 and an active BUSY session uses 90. Keep 50 to avoid interrupting focus sessions.",
+          "scan_interval": "Fallback refresh interval in seconds; live updates also arrive over the local WebSocket."
+        }
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "ok_press": "OK button pressed",
+      "ok_release": "OK button released",
+      "back_press": "Back button pressed",
+      "back_release": "Back button released",
+      "start_press": "Start button pressed",
+      "start_release": "Start button released",
+      "encoder_clockwise": "Encoder turned clockwise",
+      "encoder_counterclockwise": "Encoder turned counterclockwise",
+      "switch_busy": "Mode switch moved to Busy",
+      "switch_custom": "Mode switch moved to Custom",
+      "switch_off": "Mode switch moved to Off",
+      "switch_apps": "Mode switch moved to Apps",
+      "switch_settings": "Mode switch moved to Settings",
+      "timer_started": "Timer started",
+      "timer_paused": "Timer paused",
+      "timer_resumed": "Timer resumed",
+      "timer_phase_changed": "Timer phase changed",
+      "timer_finished": "Timer finished",
+      "timer_stopped": "Timer stopped"
+    }
+  },
   "entity": {
-    "binary_sensor": {"busy": {"name": "Busy"}, "charging": {"name": "Charging"}, "paused": {"name": "Timer paused"}, "update_available": {"name": "Update available"}},
-    "button": {"celebrate": {"name": "Celebrate"}, "clear_display": {"name": "Clear Home Assistant display"}, "pause_resume": {"name": "Pause or resume"}, "start_busy": {"name": "Start Busy profile"}, "start_custom": {"name": "Start Custom profile"}, "stop": {"name": "Stop timer"}},
-    "number": {"brightness": {"name": "Brightness"}, "volume": {"name": "Volume"}},
-    "select": {"scene": {"name": "Status scene", "state": {"available": "Available", "away": "Back soon", "busy": "Busy", "celebrate": "Celebrate", "do_not_disturb": "Do not disturb", "focus": "Focus mode", "meeting": "In a meeting", "on_air": "On air"}}},
-    "sensor": {
-      "api_version": {"name": "API version"}, "battery": {"name": "Battery"}, "current_interval": {"name": "Current interval"}, "firmware_version": {"name": "Firmware version"},
-      "power_state": {"name": "Power state", "state": {"charged": "Charged", "charging": "Charging", "discharging": "Discharging"}},
-      "storage_free": {"name": "Storage free"}, "time_remaining": {"name": "Time remaining"},
-      "timer_state": {"name": "Timer state", "state": {"infinite": "Infinite", "interval": "Interval", "not_started": "Not started", "simple": "Simple"}},
-      "uptime": {"name": "Uptime"}, "wifi_signal": {"name": "Wi-Fi signal"}
+    "binary_sensor": {
+      "busy": {"name": "Busy"},
+      "charging": {"name": "Charging"},
+      "paused": {"name": "Timer paused"},
+      "update_available": {"name": "Update available"}
     },
-    "text": {"message": {"name": "Quick message"}}
+    "button": {
+      "abort_update": {"name": "Abort firmware download"},
+      "celebrate": {"name": "Celebrate"},
+      "check_update": {"name": "Check for firmware updates"},
+      "clear_display": {"name": "Clear Home Assistant display"},
+      "pause_resume": {"name": "Pause or resume"},
+      "start_smart_home_pairing": {"name": "Start smart-home pairing"},
+      "start_busy": {"name": "Start Busy profile"},
+      "start_custom": {"name": "Start Custom profile"},
+      "stop": {"name": "Stop timer"},
+      "stop_smart_home_pairing": {"name": "Stop smart-home pairing"}
+    },
+    "event": {
+      "ok_button": {"name": "OK button"},
+      "back_button": {"name": "Back button"},
+      "start_button": {"name": "Start button"},
+      "encoder": {"name": "Encoder"},
+      "mode_switch": {"name": "Mode switch"},
+      "timer_event": {"name": "Timer event"}
+    },
+    "image": {
+      "front_screen": {"name": "Front screen"},
+      "back_screen": {"name": "Rear screen"}
+    },
+    "media_player": {
+      "audio": {"name": "Audio"}
+    },
+    "notify": {
+      "display": {"name": "Display"}
+    },
+    "number": {
+      "brightness": {"name": "Brightness"},
+      "volume": {"name": "Volume"}
+    },
+    "select": {
+      "scene": {
+        "name": "Status scene",
+        "state": {
+          "available": "Available",
+          "away": "Back soon",
+          "busy": "Busy",
+          "celebrate": "Celebrate",
+          "do_not_disturb": "Do not disturb",
+          "focus": "Focus mode",
+          "meeting": "In a meeting",
+          "on_air": "On air"
+        }
+      }
+    },
+    "sensor": {
+      "api_version": {"name": "API version"},
+      "battery": {"name": "Battery"},
+      "busy_profile": {"name": "Busy profile"},
+      "current_interval": {"name": "Current interval"},
+      "custom_profile": {"name": "Custom profile"},
+      "firmware_version": {"name": "Firmware version"},
+      "power_state": {
+        "name": "Power state",
+        "state": {
+          "charged": "Charged",
+          "charging": "Charging",
+          "discharging": "Discharging"
+        }
+      },
+      "storage_free": {"name": "Storage free"},
+      "time_remaining": {"name": "Time remaining"},
+      "timer_state": {
+        "name": "Timer state",
+        "state": {
+          "infinite": "Infinite",
+          "interval": "Interval",
+          "not_started": "Not started",
+          "simple": "Simple"
+        }
+      },
+      "uptime": {"name": "Uptime"},
+      "wifi_signal": {"name": "Wi-Fi signal"}
+    },
+    "switch": {
+      "automatic_brightness": {"name": "Automatic brightness"},
+      "automatic_updates": {"name": "Automatic updates"},
+      "bluetooth": {"name": "Bluetooth"},
+      "smart_home": {"name": "Smart-home switch"}
+    },
+    "text": {
+      "message": {"name": "Quick message"}
+    },
+    "time": {
+      "update_window_start": {"name": "Update window start"},
+      "update_window_end": {"name": "Update window end"}
+    },
+    "update": {
+      "firmware": {"name": "Firmware"}
+    }
+  },
+  "issues": {
+    "storage_low": {
+      "title": "BUSY Bar storage is almost full",
+      "description": "The BUSY Bar has very little free local storage. Delete unused Home Assistant assets or other device files before uploading more media."
+    },
+    "update_battery_low": {
+      "title": "Charge the BUSY Bar before updating",
+      "description": "A firmware update is available, but the BUSY Bar has blocked installation until its battery is sufficiently charged."
+    },
+    "update_failed": {
+      "title": "BUSY Bar firmware update failed",
+      "description": "The last firmware update failed: {detail}. Check the device, then retry from its Firmware entity."
+    },
+    "stream_unstable": {
+      "title": "BUSY Bar live connection is unstable",
+      "description": "The local WebSocket has repeatedly disconnected. State polling still works, but physical controls and screen previews may be delayed. Check LAN signal and device power."
+    }
   },
   "services": {
-    "clear_display": {"name": "Clear display", "description": "Clears only display elements owned by Home Assistant, leaving other BUSY Bar apps alone.", "fields": {"device_id": {"name": "Device", "description": "The BUSY Bar to clear."}}},
-    "draw": {"name": "Draw raw elements", "description": "Draws advanced text, rectangle, image, animation, or countdown elements using the BUSY Bar API schema.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "payload": {"name": "Display payload", "description": "A BUSY Bar DisplayElements object. Home Assistant supplies application_name."}, "clear_before_draw": {"name": "Clear first", "description": "Clear Home Assistant's current elements before drawing."}}},
-    "play_effect": {"name": "Play effect", "description": "Plays a bounded local animation with no cloud dependency.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "effect": {"name": "Effect", "description": "Rainbow, scanner, confetti, or breathe."}, "color": {"name": "Color", "description": "Primary RGB color."}, "message": {"name": "Message", "description": "Optional text overlay."}, "priority": {"name": "Priority", "description": "1–100. Active BUSY sessions use 90."}, "fps": {"name": "Frame rate", "description": "Frames per second."}, "duration": {"name": "Duration", "description": "Animation length in seconds, up to 30."}}},
-    "send_key": {"name": "Send key", "description": "Sends a virtual BUSY Bar button press.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "key": {"name": "Key", "description": "The virtual key to press."}}},
-    "show_message": {"name": "Show message", "description": "Shows colorful, scrolling text on the front display and can blink the status LED.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "message": {"name": "Message", "description": "Text to display."}, "color": {"name": "Text color", "description": "Text RGB color."}, "background": {"name": "Background", "description": "Background RGB color."}, "priority": {"name": "Priority", "description": "1–100. The default 50 does not interrupt an active BUSY session at 90."}, "duration": {"name": "Duration", "description": "Seconds to display; 0 keeps it until cleared."}, "led_color": {"name": "LED color", "description": "Optional status LED notification color."}, "scroll": {"name": "Scroll", "description": "Scroll text that does not fit."}}},
-    "show_progress": {"name": "Show progress", "description": "Shows a compact progress bar for chores, downloads, prints, and timers.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "value": {"name": "Progress", "description": "Progress from 0 to 100 percent."}, "label": {"name": "Label", "description": "Optional label; defaults to the percentage."}, "color": {"name": "Bar color", "description": "Progress bar RGB color."}, "background": {"name": "Background", "description": "Background RGB color."}, "priority": {"name": "Priority", "description": "Display ownership priority."}, "duration": {"name": "Duration", "description": "Seconds to display; 0 keeps it until cleared."}}},
-    "start_focus": {"name": "Start focus timer", "description": "Starts a one-off focus timer without changing the saved Busy or Custom profiles.", "fields": {"device_id": {"name": "Device", "description": "The target BUSY Bar."}, "minutes": {"name": "Minutes", "description": "Focus duration."}, "theme": {"name": "Theme", "description": "Firmware theme identifier, such as on_air or busy."}, "trigger_smart_home": {"name": "Trigger smart home", "description": "Emit the BUSY Bar smart-home state during this timer."}}}
+    "clear_display": {
+      "name": "Clear display",
+      "description": "Clears only display elements owned by Home Assistant, leaving other BUSY Bar apps alone.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The BUSY Bar to clear."}
+      }
+    },
+    "draw": {
+      "name": "Draw raw elements",
+      "description": "Draws advanced text, rectangle, image, animation, or countdown elements using the BUSY Bar API schema.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "payload": {"name": "Display payload", "description": "A BUSY Bar DisplayElements object. Home Assistant supplies application_name."},
+        "clear_before_draw": {"name": "Clear first", "description": "Clear Home Assistant's current elements before drawing."}
+      }
+    },
+    "play_effect": {
+      "name": "Play effect",
+      "description": "Plays a bounded local animation with no cloud dependency.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "effect": {"name": "Effect", "description": "One of the generated local animation styles."},
+        "color": {"name": "Color", "description": "Primary RGB color."},
+        "message": {"name": "Message", "description": "Optional text overlay."},
+        "priority": {"name": "Priority", "description": "1–100. Active BUSY sessions use 90."},
+        "fps": {"name": "Frame rate", "description": "Frames per second."},
+        "duration": {"name": "Duration", "description": "Animation length in seconds, up to 30."}
+      }
+    },
+    "play_preset": {
+      "name": "Play household preset",
+      "description": "Plays an opinionated animation and message for a familiar household moment.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "preset": {"name": "Preset", "description": "Doorbell, package, laundry, dinner, weather, bedtime, celebration, and more."},
+        "message": {"name": "Message", "description": "Optional replacement for the friendly default message."},
+        "priority": {"name": "Priority", "description": "Optional display priority override."},
+        "duration": {"name": "Duration", "description": "Optional animation duration override."}
+      }
+    },
+    "send_key": {
+      "name": "Send key",
+      "description": "Sends a virtual BUSY Bar button press.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "key": {"name": "Key", "description": "The virtual key to press."}
+      }
+    },
+    "show_message": {
+      "name": "Show message",
+      "description": "Shows colorful, scrolling text on the front display and can blink the status LED.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "message": {"name": "Message", "description": "Text to display."},
+        "color": {"name": "Text color", "description": "Text RGB color."},
+        "background": {"name": "Background", "description": "Background RGB color."},
+        "priority": {"name": "Priority", "description": "1–100. The default 50 does not interrupt an active BUSY session at 90."},
+        "duration": {"name": "Duration", "description": "Seconds to display; 0 keeps it until cleared."},
+        "led_color": {"name": "LED color", "description": "Optional status LED notification color."},
+        "scroll": {"name": "Scroll", "description": "Scroll text that does not fit."}
+      }
+    },
+    "show_progress": {
+      "name": "Show progress",
+      "description": "Shows a compact progress bar for chores, downloads, prints, and timers.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "value": {"name": "Progress", "description": "Progress from 0 to 100 percent."},
+        "label": {"name": "Label", "description": "Optional label; defaults to the percentage."},
+        "color": {"name": "Bar color", "description": "Progress bar RGB color."},
+        "background": {"name": "Background", "description": "Background RGB color."},
+        "priority": {"name": "Priority", "description": "Display ownership priority."},
+        "duration": {"name": "Duration", "description": "Seconds to display; 0 keeps it until cleared."}
+      }
+    },
+    "start_focus": {
+      "name": "Start focus timer",
+      "description": "Starts a one-off focus timer without changing the saved Busy or Custom profiles.",
+      "fields": {
+        "device_id": {"name": "Device", "description": "The target BUSY Bar."},
+        "minutes": {"name": "Minutes", "description": "Focus duration."},
+        "theme": {"name": "Theme", "description": "Firmware theme identifier, such as on_air or busy."},
+        "trigger_smart_home": {"name": "Trigger smart home", "description": "Emit the BUSY Bar smart-home state during this timer."}
+      }
+    },
+    "show_widget": {
+      "name": "Show widget",
+      "description": "Shows a friendly widget on the front or rear display and restores the previous layer afterward.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "widget": {"name": "Widget", "description": "Message, entity, weather, calendar, countdown, clock, progress, chart, alert, streak, or scoreboard."},
+        "title": {"name": "Title", "description": "Optional compact heading."},
+        "value": {"name": "Value", "description": "Main text value."},
+        "unit": {"name": "Unit", "description": "Optional unit appended to the value."},
+        "timestamp": {"name": "Timestamp", "description": "ISO timestamp required by countdown widgets."},
+        "values": {"name": "Chart values", "description": "A list of numbers for a chart widget."},
+        "progress": {"name": "Progress", "description": "Percentage for a progress widget."},
+        "color": {"name": "Color", "description": "Primary widget color."},
+        "background": {"name": "Background", "description": "Widget background color."},
+        "display": {"name": "Display", "description": "Front LED matrix or rear OLED."},
+        "priority": {"name": "Priority", "description": "Display ownership priority from 1 to 100."},
+        "duration": {"name": "Duration", "description": "Seconds to show the widget; zero keeps it."},
+        "led_color": {"name": "LED color", "description": "Optional status LED color."},
+        "restore": {"name": "Restore", "description": "Restore the previous eligible layer after expiry."},
+        "layer_id": {"name": "Layer ID", "description": "Optional stable identifier used to update a persistent widget."}
+      }
+    },
+    "play_sound": {
+      "name": "Play sound",
+      "description": "Plays a stock or previously uploaded sound from local device storage.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "path": {"name": "Asset path", "description": "Uploaded Home Assistant asset filename."},
+        "stock_path": {"name": "Stock sound", "description": "Firmware stock-audio filename."}
+      }
+    },
+    "stop_sound": {
+      "name": "Stop sound",
+      "description": "Stops current BUSY Bar audio playback.",
+      "fields": {"device_id": {"name": "Devices", "description": "One or more BUSY Bars."}}
+    },
+    "set_profile": {
+      "name": "Set timer profile",
+      "description": "Edits the physical Busy or Custom timer profile stored on the device.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "slot": {"name": "Profile", "description": "Busy or Custom physical switch slot."},
+        "title": {"name": "Title", "description": "Profile title shown by the device."},
+        "timer_type": {"name": "Timer type", "description": "Infinite, simple, or interval."},
+        "minutes": {"name": "Minutes", "description": "Duration for a simple timer."},
+        "work_minutes": {"name": "Work minutes", "description": "Work phase duration for an interval timer."},
+        "rest_minutes": {"name": "Rest minutes", "description": "Rest phase duration for an interval timer."},
+        "cycles": {"name": "Cycles", "description": "Number of interval work cycles."},
+        "autostart": {"name": "Autostart", "description": "Automatically start the next interval."},
+        "theme": {"name": "Theme", "description": "Firmware theme identifier."},
+        "show_work_only": {"name": "Work phase only", "description": "Show busy status only during work phases."},
+        "trigger_smart_home": {"name": "Trigger smart home", "description": "Emit the emulated smart-home switch state."}
+      }
+    },
+    "check_update": {
+      "name": "Check for firmware updates",
+      "description": "Starts the BUSY Bar's local firmware update check.",
+      "fields": {"device_id": {"name": "Devices", "description": "One or more BUSY Bars."}}
+    },
+    "abort_update": {
+      "name": "Abort firmware download",
+      "description": "Stops an in-progress firmware download before installation begins.",
+      "fields": {"device_id": {"name": "Devices", "description": "One or more BUSY Bars."}}
+    },
+    "play_game": {
+      "name": "Play mini-app",
+      "description": "Runs a bounded local game or playful app; Pong, Snake, and Reaction use the physical controls.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "game": {"name": "Game", "description": "Mini-app to run."},
+        "duration": {"name": "Duration", "description": "Maximum runtime in seconds."},
+        "fps": {"name": "Frame rate", "description": "Animation frame rate."},
+        "mood": {"name": "Pixel-pet mood", "description": "Expression used by the Pixel Pet app."},
+        "priority": {"name": "Priority", "description": "Display ownership priority."}
+      }
+    },
+    "stop_game": {
+      "name": "Stop mini-app",
+      "description": "Stops the running mini-app and restores underlying content.",
+      "fields": {"device_id": {"name": "Devices", "description": "One or more BUSY Bars."}}
+    },
+    "show_media": {
+      "name": "Show media",
+      "description": "Converts a Home Assistant media-source image, GIF, or video locally and shows it on the Bar.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "media_content_id": {"name": "Media", "description": "Image, GIF, or video from Home Assistant media sources."},
+        "display": {"name": "Display", "description": "Front LED matrix or rear OLED."},
+        "duration": {"name": "Duration", "description": "Seconds to show the media."},
+        "priority": {"name": "Priority", "description": "Display ownership priority."},
+        "loop": {"name": "Loop", "description": "Loop animated media."},
+        "opacity": {"name": "Opacity", "description": "Media opacity percentage."}
+      }
+    },
+    "play_media": {
+      "name": "Play media audio",
+      "description": "Converts and plays an audio file from Home Assistant media sources.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "media_content_id": {"name": "Media", "description": "Audio file from Home Assistant media sources."}
+      }
+    },
+    "show_qr": {
+      "name": "Show QR code",
+      "description": "Generates a QR code locally and shows it on the rear OLED.",
+      "fields": {
+        "device_id": {"name": "Devices", "description": "One or more BUSY Bars."},
+        "value": {"name": "Value", "description": "Text or URL encoded into the QR code."},
+        "duration": {"name": "Duration", "description": "Seconds to show the QR code."},
+        "priority": {"name": "Priority", "description": "Display ownership priority."}
+      }
+    },
+    "delete_assets": {
+      "name": "Delete Home Assistant assets",
+      "description": "Deletes only media uploaded under this integration's device namespace.",
+      "fields": {"device_id": {"name": "Devices", "description": "One or more BUSY Bars."}}
+    }
   }
 }

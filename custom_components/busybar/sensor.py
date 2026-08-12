@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from busylib import types
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -45,6 +46,32 @@ class BusyBarSensorDescription(SensorEntityDescription):
     """Describe a BUSY Bar sensor."""
 
     value_fn: Callable[[BusyBarData], Any]
+    attributes_fn: Callable[[BusyBarData], dict[str, Any] | None] | None = None
+
+
+def _profile_attributes(data: BusyBarData, slot: str) -> dict[str, Any] | None:
+    profile = data.profiles.get(slot)
+    if profile is None:
+        return None
+    timer = profile.timer_settings
+    attributes: dict[str, Any] = {
+        "timer_type": timer.type.lower(),
+        "theme": profile.busy_bar_settings.theme,
+        "show_work_only": profile.busy_bar_settings.show_work_phase_only,
+        "trigger_smart_home": profile.busy_bar_settings.trigger_smart_home,
+    }
+    if isinstance(timer, types.BusyTimerSimpleSettings):
+        attributes["minutes"] = round(timer.total_time_ms / 60_000)
+    elif isinstance(timer, types.BusySnapshotIntervalSettings):
+        attributes.update(
+            {
+                "work_minutes": round(timer.interval_work_ms / 60_000),
+                "rest_minutes": round(timer.interval_rest_ms / 60_000),
+                "cycles": timer.interval_work_cycles_count,
+                "autostart": timer.is_autostart_enabled,
+            }
+        )
+    return attributes
 
 
 SENSORS: tuple[BusyBarSensorDescription, ...] = (
@@ -139,6 +166,24 @@ SENSORS: tuple[BusyBarSensorDescription, ...] = (
             data.snapshot.storage.free if data.snapshot.storage else None
         ),
     ),
+    BusyBarSensorDescription(
+        key="busy_profile",
+        translation_key="busy_profile",
+        icon="mdi:briefcase-clock",
+        value_fn=lambda data: (
+            data.profiles["busy"].title if "busy" in data.profiles else None
+        ),
+        attributes_fn=lambda data: _profile_attributes(data, "busy"),
+    ),
+    BusyBarSensorDescription(
+        key="custom_profile",
+        translation_key="custom_profile",
+        icon="mdi:timer-cog-outline",
+        value_fn=lambda data: (
+            data.profiles["custom"].title if "custom" in data.profiles else None
+        ),
+        attributes_fn=lambda data: _profile_attributes(data, "custom"),
+    ),
 )
 
 
@@ -166,3 +211,10 @@ class BusyBarSensor(BusyBarEntity, SensorEntity):
     def native_value(self) -> Any:
         """Return the sensor value."""
         return self.entity_description.value_fn(self.coordinator.data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return compact profile details when applicable."""
+        if self.entity_description.attributes_fn is None:
+            return None
+        return self.entity_description.attributes_fn(self.coordinator.data)

@@ -1,0 +1,35 @@
+blueprint:
+  name: BUSY Bar — Welcome home
+  description: Play a warm local welcome when a person arrives home.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    person:
+      name: Person
+      selector:
+        entity:
+          domain: person
+    message:
+      name: Message
+      default: "WELCOME HOME"
+      selector:
+        text:
+
+triggers:
+  - trigger: state
+    entity_id: !input person
+    to: "home"
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: welcome_home
+      message: !input message
+
+mode: queued
+max: 5

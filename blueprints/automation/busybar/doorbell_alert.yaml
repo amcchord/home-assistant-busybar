@@ -1,0 +1,36 @@
+blueprint:
+  name: BUSY Bar — Doorbell alert
+  description: Flash an unmistakable local alert when a doorbell or contact entity activates.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    doorbell:
+      name: Doorbell entity
+      selector:
+        entity:
+          domain: binary_sensor
+    message:
+      name: Message
+      default: "SOMEONE'S HERE"
+      selector:
+        text:
+
+triggers:
+  - trigger: state
+    entity_id: !input doorbell
+    to: "on"
+
+actions:
+  - action: busybar.play_effect
+    data:
+      device_id: !input busybar_device
+      effect: red_alert
+      message: !input message
+      duration: 12
+      priority: 100
+
+mode: restart

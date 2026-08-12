@@ -1,0 +1,34 @@
+blueprint:
+  name: BUSY Bar — Weather warning
+  description: Turn any weather-warning binary sensor into a high-priority local alert.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    warning_sensor:
+      name: Weather warning sensor
+      selector:
+        entity:
+          domain: binary_sensor
+    message:
+      name: Message
+      default: "WEATHER ALERT"
+      selector:
+        text:
+
+triggers:
+  - trigger: state
+    entity_id: !input warning_sensor
+    to: "on"
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: weather_warning
+      message: !input message
+
+mode: restart

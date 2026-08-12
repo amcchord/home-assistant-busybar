@@ -1,0 +1,34 @@
+blueprint:
+  name: BUSY Bar — Package delivered
+  description: Celebrate a package notification from any binary sensor.
+  domain: automation
+  input:
+    busybar_device:
+      name: BUSY Bar
+      selector:
+        device:
+          integration: busybar
+    package_sensor:
+      name: Package sensor
+      selector:
+        entity:
+          domain: binary_sensor
+    message:
+      name: Message
+      default: "PACKAGE!"
+      selector:
+        text:
+
+triggers:
+  - trigger: state
+    entity_id: !input package_sensor
+    to: "on"
+
+actions:
+  - action: busybar.play_preset
+    data:
+      device_id: !input busybar_device
+      preset: package_delivered
+      message: !input message
+
+mode: restart

@@ -86,6 +86,34 @@ def _background(color: str) -> dict[str, Any]:
     }
 
 
+def _rect(
+    element_id: str,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    color: str,
+) -> dict[str, Any]:
+    """Create a borderless front-display rectangle."""
+    x = max(0, min(FRONT_WIDTH - 1, x))
+    y = max(0, min(FRONT_HEIGHT - 1, y))
+    width = max(1, min(width, FRONT_WIDTH - x))
+    height = max(1, min(height, FRONT_HEIGHT - y))
+    return {
+        "id": element_id,
+        "type": "rectangle",
+        "x": x,
+        "y": y,
+        "width": width,
+        "height": height,
+        "fill": "solid",
+        "fill_colors": [normalize_color(color)],
+        "border_width": 0,
+        "border_color": "#00000000",
+        "display": "front",
+    }
+
+
 def _text(
     message: str,
     color: str,
@@ -318,6 +346,186 @@ def effect_frames(
                 (math.sin(frame / max(1, count - 1) * math.tau - math.pi / 2) + 1) / 2
             )
             elements = [_background(scale_color(base_color, strength))]
+        elif effect == "aurora":
+            elements = [_background("#020617FF")]
+            for stripe in range(12):
+                wave = math.sin(frame * 0.25 + stripe * 0.7)
+                hue = (0.42 + stripe * 0.025 + wave * 0.04) % 1
+                red, green, blue = colorsys.hsv_to_rgb(hue, 0.8, 0.85)
+                elements.append(
+                    _rect(
+                        f"aurora-{stripe}",
+                        stripe * 6,
+                        max(0, round(5 + wave * 4)),
+                        6,
+                        8,
+                        f"#{round(red * 255):02X}{round(green * 255):02X}"
+                        f"{round(blue * 255):02X}FF",
+                    )
+                )
+        elif effect == "fireplace":
+            palette = ("#7F1D1DFF", "#DC2626FF", "#F97316FF", "#FDE047FF")
+            for flame in range(18):
+                height = rng.randrange(3, 15)
+                elements.append(
+                    _rect(
+                        f"flame-{flame}",
+                        flame * 4,
+                        FRONT_HEIGHT - height,
+                        4,
+                        height,
+                        rng.choice(palette),
+                    )
+                )
+        elif effect == "lava_lamp":
+            for blob in range(7):
+                x = round((blob * 13 + frame * (1 + blob % 3)) % (FRONT_WIDTH + 12)) - 6
+                y = round(7 + math.sin(frame * 0.2 + blob) * 6)
+                elements.append(
+                    _rect(
+                        f"lava-{blob}",
+                        x,
+                        max(0, y - 3),
+                        8,
+                        6,
+                        scale_color(base_color, 0.45 + blob * 0.08),
+                    )
+                )
+        elif effect == "ocean_waves":
+            elements = [_background("#082F49FF")]
+            for column in range(18):
+                height = round(5 + 4 * math.sin(column * 0.7 + frame * 0.35))
+                elements.append(
+                    _rect(
+                        f"wave-{column}",
+                        column * 4,
+                        FRONT_HEIGHT - height,
+                        4,
+                        height,
+                        "#38BDF8FF" if column % 2 else "#0EA5E9FF",
+                    )
+                )
+        elif effect in {"starfield", "sparkle", "snowfall"}:
+            palette = {
+                "starfield": ("#FFFFFFFF", "#93C5FDFF", "#C4B5FDFF"),
+                "sparkle": (base_color, "#FFFFFFFF", "#FDE047FF"),
+                "snowfall": ("#FFFFFFFF", "#BAE6FDFF", "#E0F2FEFF"),
+            }[effect]
+            for dot in range(22):
+                speed = 1 + dot % 3
+                x = (dot * 17 + (frame * speed if effect == "starfield" else dot)) % 72
+                y = (
+                    (dot * 7 + frame * speed) % 16
+                    if effect == "snowfall"
+                    else (dot * 11 + frame // speed) % 16
+                )
+                size = 2 if dot % 7 == 0 else 1
+                elements.append(
+                    _rect(f"particle-{dot}", x, y, size, size, palette[dot % 3])
+                )
+        elif effect == "matrix_rain":
+            for column in range(12):
+                head = (frame * (1 + column % 3) + column * 5) % 22 - 6
+                for tail in range(4):
+                    y = head - tail * 3
+                    if 0 <= y < FRONT_HEIGHT:
+                        elements.append(
+                            _rect(
+                                f"matrix-{column}-{tail}",
+                                column * 6,
+                                y,
+                                3,
+                                2,
+                                scale_color("#4ADE80FF", 1 - tail * 0.22),
+                            )
+                        )
+        elif effect == "sunrise":
+            strength = min(1.0, frame / max(1, count - 1))
+            elements = [_background(scale_color("#F97316FF", 0.12 + strength * 0.5))]
+            sun_y = round(14 - strength * 12)
+            elements.append(_rect("sun", 30, sun_y, 12, 12, "#FDE047FF"))
+            elements.append(_rect("horizon", 0, 13, 72, 3, "#7C2D12FF"))
+        elif effect == "equalizer":
+            for bar in range(18):
+                height = 2 + round(12 * (math.sin(frame * 0.55 + bar * 1.7) + 1) / 2)
+                elements.append(
+                    _rect(
+                        f"eq-{bar}",
+                        bar * 4,
+                        FRONT_HEIGHT - height,
+                        3,
+                        height,
+                        base_color,
+                    )
+                )
+        elif effect == "fireworks":
+            palette = (base_color, "#F43F5EFF", "#FDE047FF", "#4ADE80FF")
+            center_x = 12 + (frame // 8 * 23) % 48
+            center_y = 8
+            radius = 1 + frame % 8
+            for spark in range(16):
+                angle = spark / 16 * math.tau
+                x = round(center_x + math.cos(angle) * radius)
+                y = round(center_y + math.sin(angle) * radius)
+                if 0 <= x < 72 and 0 <= y < 16:
+                    elements.append(
+                        _rect(f"spark-{spark}", x, y, 2, 2, palette[spark % 4])
+                    )
+        elif effect in {"jackpot", "red_alert", "heartbeat", "thunderstorm"}:
+            if effect == "jackpot":
+                elements = [_background("#7F1D1DFF" if frame % 2 else "#F59E0BFF")]
+                message = message or "7 7 7"
+            elif effect == "red_alert":
+                elements = [_background("#DC2626FF" if frame % 2 else "#450A0AFF")]
+                message = message or "ALERT"
+            elif effect == "heartbeat":
+                phase = frame % max(4, fps)
+                pulse = 1.0 if phase in (0, 2) else 0.18
+                elements = [_background(scale_color("#F43F5EFF", pulse))]
+                message = message or "♥"
+            else:
+                flash = frame % max(3, fps) == 0
+                elements = [_background("#FFFFFFFF" if flash else "#1E1B4BFF")]
+                for bolt in range(5):
+                    elements.append(
+                        _rect(
+                            f"bolt-{bolt}",
+                            28 + bolt * 3,
+                            bolt * 3,
+                            5,
+                            4,
+                            "#FDE047FF",
+                        )
+                    )
+        elif effect in {"package_drop", "laundry_party", "goal"}:
+            if effect == "package_drop":
+                y = max(2, 14 - frame % 16)
+                elements.append(_rect("box", 30, y, 12, 9, "#D97706FF"))
+                elements.append(_rect("tape", 35, y, 2, 9, "#FDE68AFF"))
+                message = message or "PACKAGE"
+            elif effect == "laundry_party":
+                palette = ("#BAE6FDFF", "#67E8F9FF", "#FFFFFFFF")
+                for bubble in range(18):
+                    x = (bubble * 13 + frame * (bubble % 3 + 1)) % 72
+                    y = (bubble * 9 - frame * 2) % 16
+                    elements.append(
+                        _rect(f"bubble-{bubble}", x, y, 2, 2, palette[bubble % 3])
+                    )
+                message = message or "DONE!"
+            else:
+                palette = ("#22C55EFF", "#FDE047FF", "#FFFFFFFF")
+                for dot in range(20):
+                    elements.append(
+                        _rect(
+                            f"goal-{dot}",
+                            (dot * 19 + frame * 3) % 72,
+                            (dot * 7 + frame) % 16,
+                            2,
+                            2,
+                            palette[dot % 3],
+                        )
+                    )
+                message = message or "GOAL!"
         else:
             raise ValueError(f"Unknown effect: {effect}")
 

@@ -18,6 +18,7 @@ pip install -r requirements_test.txt
 pytest
 ruff check .
 ruff format --check .
+deno check custom_components/busybar/www/busybar-card.js
 ```
 
 ## Pull requests
@@ -25,4 +26,3 @@ ruff format --check .
 Describe the user impact, tests performed, firmware/API version used, and whether the change writes device state. Add or update tests for behavior changes. Screenshots or a short video are especially helpful for visual effects.
 
 By contributing, you agree that your work is licensed under this repository's MIT license.
-
