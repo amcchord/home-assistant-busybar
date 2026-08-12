@@ -8,6 +8,53 @@
 
 A local-first, unusually playful [BUSY Bar](https://busy.app) integration for [Home Assistant](https://www.home-assistant.io). It turns the Bar's displays, LED, speaker, timer, switch, encoder, and buttons into first-class Home Assistant building blocks—without putting a cloud service in the control path.
 
+## See it in action
+
+These staged dashboard captures use the real bundled Playground card and representative Home Assistant entities to show the integration's range.
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/playground-overview.jpg" alt="BUSY Bar Playground card composing a calendar widget beside a live device preview and priority stack">
+      <br><sub><strong>Compose and preview.</strong> Build widgets for either screen while watching the live front display.</sub>
+    </td>
+    <td width="50%">
+      <img src="docs/images/pixel-canvas.jpg" alt="BUSY Bar pixel canvas with draggable text placement and a live hardware preview">
+      <br><sub><strong>Place every pixel.</strong> Drag text around the 72 × 16 front or 160 × 80 rear canvas.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/effects-presets.jpg" alt="BUSY Bar household presets and animation gallery including aurora, equalizer, fireplace, and laundry party">
+      <br><sub><strong>Make status delightful.</strong> Start with 15 household presets or pick from 22 generated effects.</sub>
+    </td>
+    <td width="50%">
+      <img src="docs/images/mini-apps.jpg" alt="BUSY Bar mini-app gallery showing Pong, Snake, Reaction, and Pixel Pet">
+      <br><sub><strong>Turn it into a tiny arcade.</strong> Seven mini-apps include physical-control Pong, Snake, and Reaction.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/focus-profiles.jpg" alt="BUSY Bar interval focus profile editor with a live focus timer and physical controls">
+      <br><sub><strong>Make focus physical.</strong> Edit the real Busy and Custom profiles and react to buttons, the encoder, or mode switch.</sub>
+    </td>
+    <td width="50%">
+      <img src="docs/images/local-media-qr.jpg" alt="BUSY Bar local media tools showing a front-screen animation, speaker audio, and rear-screen QR code">
+      <br><sub><strong>Keep media local.</strong> Send Media Source images, animation, audio, and locally generated rear-screen QR codes.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/native-entities.jpg" alt="Home Assistant device view with BUSY Bar controls, events, diagnostics, media, notifications, and display preview">
+      <br><sub><strong>Use native building blocks.</strong> Controls, events, previews, notifications, media, updates, and diagnostics all feel at home.</sub>
+    </td>
+    <td width="50%">
+      <img src="docs/images/blueprints-multibar.jpg" alt="BUSY Bar automation blueprints and three synchronized bars displaying Dinner Ready">
+      <br><sub><strong>Automate one Bar—or every Bar.</strong> Import 13 blueprints and dispatch concurrently across a room or home.</sub>
+    </td>
+  </tr>
+</table>
+
 ## What it can do
 
 - **React instantly.** Physical buttons, the encoder, mode switch, timer transitions, device state, and screen frames arrive over the local WebSocket. Polling remains as a resilient fallback.
