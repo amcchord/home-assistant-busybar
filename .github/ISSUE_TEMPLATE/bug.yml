@@ -1,0 +1,46 @@
+name: Bug report
+description: Report unexpected BUSY Bar integration behavior
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the integration. Never paste an API key.
+  - type: input
+    id: integration
+    attributes:
+      label: Integration version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: home_assistant
+    attributes:
+      label: Home Assistant version
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: BUSY Bar firmware and API version
+      placeholder: Firmware 1.1.1, API 25.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant redacted logs or diagnostics
+      render: text
+

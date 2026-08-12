@@ -1,0 +1,164 @@
+show_message:
+  fields:
+    device_id: &device
+      required: true
+      selector:
+        device:
+          integration: busybar
+    message:
+      required: true
+      example: "Dinner is ready!"
+      selector:
+        text:
+          multiline: false
+    color: &color
+      default: [255, 255, 255]
+      example: "#4ADE80FF"
+      selector:
+        color_rgb:
+    background: &background
+      default: [0, 0, 0]
+      example: "#052E16FF"
+      selector:
+        color_rgb:
+    priority: &priority
+      default: 50
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
+          mode: slider
+    duration: &duration
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 3600
+          step: 1
+          unit_of_measurement: s
+          mode: box
+    led_color:
+      example: "#22C55EFF"
+      selector:
+        color_rgb:
+    scroll:
+      default: true
+      selector:
+        boolean:
+
+show_progress:
+  fields:
+    device_id: *device
+    value:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+          mode: slider
+    label:
+      example: "3D print"
+      selector:
+        text:
+    color: *color
+    background: *background
+    priority: *priority
+    duration: *duration
+
+play_effect:
+  fields:
+    device_id: *device
+    effect:
+      required: true
+      default: rainbow
+      selector:
+        select:
+          options:
+            - rainbow
+            - scanner
+            - confetti
+            - breathe
+    color: *color
+    message:
+      example: "YAY!"
+      selector:
+        text:
+    priority: *priority
+    fps:
+      default: 8
+      selector:
+        number:
+          min: 2
+          max: 12
+          step: 1
+          mode: slider
+    duration:
+      default: 5
+      selector:
+        number:
+          min: 0.5
+          max: 30
+          step: 0.5
+          unit_of_measurement: s
+          mode: slider
+
+clear_display:
+  fields:
+    device_id: *device
+
+start_focus:
+  fields:
+    device_id: *device
+    minutes:
+      required: true
+      default: 25
+      selector:
+        number:
+          min: 1
+          max: 1440
+          step: 1
+          unit_of_measurement: min
+          mode: box
+    theme:
+      default: on_air
+      selector:
+        text:
+    trigger_smart_home:
+      default: true
+      selector:
+        boolean:
+
+send_key:
+  fields:
+    device_id: *device
+    key:
+      required: true
+      selector:
+        select:
+          options:
+            - up
+            - down
+            - ok
+            - back
+            - start
+            - busy
+            - custom
+            - "off"
+            - apps
+            - settings
+
+draw:
+  fields:
+    device_id: *device
+    payload:
+      required: true
+      example: '{"priority": 50, "elements": [{"id": "hello", "type": "text", "text": "Hello!", "font": "normal", "x": 36, "y": 3, "align": "center", "display": "front"}]}'
+      selector:
+        object:
+    clear_before_draw:
+      default: false
+      selector:
+        boolean:

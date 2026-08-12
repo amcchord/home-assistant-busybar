@@ -1,0 +1,25 @@
+name: Feature or animation idea
+description: Suggest a capability, entity, scene, or delightful pixel effect
+title: "[Idea]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should it do?
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Home Assistant use case
+    validations:
+      required: true
+  - type: dropdown
+    id: cloud
+    attributes:
+      label: Can this remain fully local?
+      options: ["Yes", "No", "Unsure"]
+    validations:
+      required: true
+

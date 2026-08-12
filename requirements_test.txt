@@ -1,0 +1,4 @@
+busylib==1.3.0
+pytest-cov==7.1.0
+pytest-homeassistant-custom-component==0.13.355
+ruff==0.15.21

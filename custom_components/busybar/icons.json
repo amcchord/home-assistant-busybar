@@ -1,0 +1,19 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "busy": {"default": "mdi:briefcase-clock"},
+      "paused": {"default": "mdi:pause-circle"}
+    },
+    "button": {
+      "celebrate": {"default": "mdi:party-popper"},
+      "clear_display": {"default": "mdi:monitor-off"},
+      "pause_resume": {"default": "mdi:play-pause"},
+      "start_busy": {"default": "mdi:briefcase-play"},
+      "start_custom": {"default": "mdi:timer-play-outline"},
+      "stop": {"default": "mdi:stop-circle-outline"}
+    },
+    "select": {"scene": {"default": "mdi:palette"}},
+    "text": {"message": {"default": "mdi:message-badge"}}
+  }
+}
+

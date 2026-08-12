@@ -1,0 +1,32 @@
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --disable-warnings"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["custom_components.busybar"]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+]
+show_missing = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ASYNC", "B", "C4", "E", "F", "I", "PIE", "PT", "RUF", "SIM", "UP"]
+ignore = [
+  "COM812",
+  "RUF012",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "SLF001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["custom_components.busybar"]
