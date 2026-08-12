@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BUSY Bar for Home Assistant — showcase</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071019;
+        --panel: #101b28;
+        --panel-2: #142231;
+        --line: rgba(255, 255, 255, 0.09);
+        --text: #f4f8fb;
+        --muted: #94a8bb;
+        --cyan: #22d3ee;
+        --pink: #f472b6;
+        --green: #4ade80;
+        --orange: #fb923c;
+        --red: #fb7185;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+      body {
+        background: #02070b;
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 14px;
+      }
+      button, input, select { font-family: inherit; }
+
+      .frame {
+        width: 1440px;
+        height: 900px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 212px 1fr;
+        background:
+          radial-gradient(circle at 85% -10%, rgba(34, 211, 238, 0.08), transparent 30%),
+          radial-gradient(circle at 45% 110%, rgba(244, 114, 182, 0.06), transparent 30%),
+          var(--bg);
+      }
+
+      .sidebar {
+        position: relative;
+        z-index: 3;
+        border-right: 1px solid var(--line);
+        background: rgba(5, 13, 21, 0.92);
+        padding: 20px 12px;
+      }
+      .home-mark { display: flex; align-items: center; gap: 11px; padding: 0 10px 24px; font-weight: 800; font-size: 16px; }
+      .home-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: linear-gradient(135deg, #03a9f4, #0277bd); box-shadow: 0 8px 20px #0288d155; }
+      .nav-label { padding: 15px 11px 8px; color: #657b90; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 800; }
+      .nav-item { display: flex; gap: 11px; align-items: center; min-height: 43px; padding: 0 12px; margin: 3px 0; border-radius: 10px; color: #9eb0c1; }
+      .nav-item.active { color: white; background: rgba(34, 211, 238, .12); box-shadow: inset 3px 0 var(--cyan); }
+      .nav-icon { width: 22px; text-align: center; opacity: .95; }
+      .sidebar-foot { position: absolute; left: 13px; bottom: 17px; width: 186px; }
+      .user { display: flex; gap: 10px; align-items: center; padding: 12px; border-top: 1px solid var(--line); color: #b7c4d0; }
+      .avatar { width: 31px; height: 31px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: linear-gradient(135deg, var(--pink), #8b5cf6); }
+
+      .workspace { min-width: 0; overflow: hidden; }
+      .topbar { position: relative; z-index: 2; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--line); background: rgba(6, 16, 25, .72); backdrop-filter: blur(18px); }
+      .title-line { display: flex; align-items: center; gap: 13px; }
+      .title-line img { width: 33px; height: 33px; border-radius: 9px; box-shadow: 0 6px 20px #0008; }
+      .topbar h1 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+      .crumb { color: var(--muted); font-weight: 500; }
+      .top-actions { display: flex; gap: 10px; align-items: center; }
+      .pill { border: 1px solid var(--line); background: #fff06; border-radius: 999px; padding: 8px 11px; color: #b8c6d3; font-size: 12px; }
+      .pill.online::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); }
+
+      .scene { position: relative; height: 830px; padding: 24px 28px 28px; overflow: hidden; }
+      .scene-heading { height: 55px; display: flex; align-items: flex-start; justify-content: space-between; }
+      .scene-heading h2 { margin: 0 0 5px; font-size: 22px; letter-spacing: -.02em; }
+      .scene-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+      .tag { color: var(--cyan); border: 1px solid #22d3ee44; background: #22d3ee10; border-radius: 999px; padding: 7px 11px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+      .columns { min-width: 0; height: 723px; display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(360px, .78fr); gap: 18px; align-items: start; }
+      .columns.native { grid-template-columns: minmax(0, 1.4fr) minmax(360px, .6fr); }
+      .panel-card { min-width: 0; background: linear-gradient(145deg, rgba(19, 32, 46, .98), rgba(12, 23, 35, .98)); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 50px #0006; overflow: hidden; }
+      .panel-head { min-height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 17px; border-bottom: 1px solid var(--line); }
+      .panel-head strong { font-size: 14px; }
+      .panel-head span { color: var(--muted); font-size: 12px; }
+      .panel-body { padding: 16px; }
+      .stack { display: grid; gap: 14px; }
+
+      .playground-shell { max-height: 723px; overflow: hidden; }
+      busybar-card { display: block; --primary-text-color: #eef6fb; --secondary-text-color: #94a8bb; --ha-card-background: #101b28; }
+      ha-card { display: block; }
+
+      .device-summary { display: grid; gap: 12px; }
+      .device-hero { display: flex; gap: 14px; align-items: center; }
+      .device-hero img { width: 52px; height: 52px; border-radius: 13px; }
+      .device-hero h3 { margin: 0 0 5px; font-size: 18px; }
+      .device-hero p { margin: 0; color: var(--muted); }
+      .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+      .metric { padding: 12px; border-radius: 11px; background: #fff05; border: 1px solid #fff07; }
+      .metric small { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .09em; margin-bottom: 5px; }
+      .metric strong { font-size: 15px; }
+      .ok { color: var(--green); }
+      .cyan { color: var(--cyan); }
+      .pink { color: var(--pink); }
+      .orange { color: var(--orange); }
+
+      .bar-device { position: relative; height: 103px; display: flex; align-items: center; justify-content: center; padding: 0 28px; border-radius: 17px; background: linear-gradient(180deg, #e8edf0, #aeb8bd 58%, #778188); box-shadow: inset 0 3px 2px #fff9, inset 0 -6px 11px #0004, 0 18px 30px #0006; }
+      .bar-device.dark { background: linear-gradient(180deg, #3d444b, #1b2127 58%, #0b0f13); }
+      .bar-screen { width: 100%; height: 58px; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #010409; border: 3px solid #20262b; box-shadow: inset 0 0 22px #000, 0 0 0 1px #fff3; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 900; letter-spacing: .08em; image-rendering: pixelated; }
+      .bar-screen.cyan-glow { color: var(--cyan); text-shadow: 0 0 12px #22d3eeaa; }
+      .bar-screen.pink-glow { color: var(--pink); text-shadow: 0 0 12px #f472b6aa; }
+      .bar-led { position: absolute; width: 6px; height: 60px; left: 13px; top: 21px; border-radius: 6px; background: linear-gradient(var(--cyan), var(--pink)); box-shadow: 0 0 12px #22d3eeaa; }
+      .bar-knob { position: absolute; right: 9px; top: 37px; width: 22px; height: 28px; border-radius: 6px; background: linear-gradient(90deg, #717b82, #d3dadd, #6c757c); box-shadow: 0 3px 5px #0007; }
+      .pixel-label { font-size: 24px; }
+      .pixel-sub { margin-left: 18px; color: #fff; font-size: 13px; letter-spacing: .06em; }
+
+      .layers { display: grid; gap: 8px; }
+      .layer { display: grid; grid-template-columns: 47px 1fr auto; align-items: center; gap: 10px; padding: 10px 11px; border-radius: 10px; background: #fff05; border-left: 3px solid var(--cyan); }
+      .layer:nth-child(2) { border-color: var(--pink); opacity: .78; }
+      .layer:nth-child(3) { border-color: #64748b; opacity: .55; }
+      .layer b { color: var(--cyan); font-size: 12px; }
+      .layer span, .layer small { color: var(--muted); }
+
+      .effect-grid, .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
+      .effect-tile, .game-tile { min-height: 112px; border-radius: 13px; overflow: hidden; border: 1px solid var(--line); background: #04080c; position: relative; }
+      .tile-title { position: absolute; left: 10px; bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 900; text-shadow: 0 2px 8px #000; }
+      .aurora { background: radial-gradient(ellipse at 25% 120%, #4ade80, transparent 48%), radial-gradient(ellipse at 70% -15%, #c084fc, transparent 45%), linear-gradient(120deg, #05122a, #083344); }
+      .equalizer { background: repeating-linear-gradient(90deg, transparent 0 8%, #22d3ee 8% 13%, transparent 13% 18%), linear-gradient(0deg, #f472b6, transparent 75%); clip-path: inset(18px 0 0); }
+      .fireplace { background: radial-gradient(ellipse at 50% 110%, #fff7ae 0 8%, #fb923c 22%, #dc2626 45%, transparent 68%), #160503; }
+      .laundry { background: radial-gradient(circle at 25% 30%, #fff 0 3%, transparent 4%), radial-gradient(circle at 65% 20%, #22d3ee 0 5%, transparent 6%), radial-gradient(circle at 78% 65%, #f472b6 0 7%, transparent 8%), linear-gradient(135deg, #132b48, #40174a); }
+      .game-tile { min-height: 124px; display: grid; place-items: center; font-family: ui-monospace, monospace; font-weight: 900; color: var(--green); text-shadow: 0 0 9px currentColor; }
+      .game-tile .score { position: absolute; top: 9px; font-size: 11px; color: white; }
+      .paddle { position: absolute; width: 4px; height: 36px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+      .paddle.left { left: 17px; }
+      .paddle.right { right: 17px; }
+      .ball { width: 6px; height: 6px; background: white; box-shadow: 0 0 8px white; }
+      .snake-path { font-size: 25px; letter-spacing: -8px; transform: rotate(-10deg); }
+      .pet { font-size: 42px; }
+      .reaction { color: #081109; background: var(--green); text-shadow: none; font-size: 28px; }
+
+      .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .phase { padding: 12px 7px; text-align: center; border-radius: 10px; background: #fff05; color: var(--muted); font-size: 11px; }
+      .phase.active { color: #021014; background: var(--cyan); font-weight: 900; }
+      .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .control { padding: 12px 6px; text-align: center; border-radius: 10px; background: #fff06; border: 1px solid var(--line); }
+      .control b { display: block; font-size: 18px; margin-bottom: 3px; }
+      .control small { color: var(--muted); }
+
+      .qr-wrap { display: grid; grid-template-columns: 1.25fr .75fr; gap: 13px; }
+      .rear-screen { min-height: 194px; display: grid; place-items: center; border-radius: 14px; background: #020407; border: 4px solid #283039; box-shadow: inset 0 0 25px #000, 0 16px 30px #0006; }
+      .qr { width: 142px; height: 142px; padding: 9px; background: white; }
+      .media-list { display: grid; gap: 8px; }
+      .media-item { padding: 10px; display: grid; grid-template-columns: 35px 1fr auto; gap: 9px; align-items: center; border-radius: 9px; background: #fff05; }
+      .media-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; background: #22d3ee18; color: var(--cyan); }
+      .media-item small { color: var(--muted); }
+
+      .entity-list { display: grid; }
+      .entity-row { min-height: 48px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 0 16px; border-bottom: 1px solid #ffffff08; }
+      .entity-row:last-child { border-bottom: 0; }
+      .entity-row .entity-icon { width: 30px; height: 30px; border-radius: 9px; background: #22d3ee16; display: grid; place-items: center; color: var(--cyan); }
+      .entity-row small { display: block; color: var(--muted); margin-top: 2px; }
+      .entity-value { color: #b8c7d4; text-align: right; }
+      .toggle { width: 36px; height: 20px; border-radius: 999px; background: var(--cyan); padding: 3px; }
+      .toggle::after { content: ""; display: block; width: 14px; height: 14px; border-radius: 50%; background: #041014; margin-left: 16px; }
+      .event-feed { display: grid; gap: 9px; }
+      .event { display: grid; grid-template-columns: 31px 1fr auto; gap: 9px; align-items: center; padding: 10px; border-radius: 10px; background: #fff05; }
+      .event time { color: var(--muted); font-size: 11px; }
+
+      .blueprint-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
+      .blueprint { min-height: 123px; padding: 14px; border: 1px solid var(--line); border-radius: 13px; background: linear-gradient(145deg, #172536, #0d1722); }
+      .blueprint .bp-icon { width: 34px; height: 34px; display: grid; place-items: center; margin-bottom: 9px; border-radius: 10px; color: var(--cyan); background: #22d3ee17; }
+      .blueprint h4 { margin: 0 0 5px; font-size: 13px; }
+      .blueprint p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+      .multi-bars { display: grid; gap: 11px; }
+      .mini-bar { height: 92px; }
+      .mini-bar .bar-screen { height: 50px; font-size: 15px; }
+      .sync-line { display: flex; justify-content: center; align-items: center; gap: 8px; color: var(--green); font-size: 12px; }
+      .sync-line::before, .sync-line::after { content: ""; width: 55px; height: 1px; background: #4ade8066; }
+
+      .legend { color: var(--muted); font-size: 11px; line-height: 1.45; }
+    </style>
+    <script src="/custom_components/busybar/www/busybar-card.js" defer></script>
+  </head>
+  <body>
+    <div class="frame">
+      <aside class="sidebar">
+        <div class="home-mark"><span class="home-icon">⌂</span><span>Home Assistant</span></div>
+        <div class="nav-item"><span class="nav-icon">◫</span>Overview</div>
+        <div class="nav-item active"><span class="nav-icon">▰</span>BUSY Bar</div>
+        <div class="nav-item"><span class="nav-icon">⌁</span>Automations</div>
+        <div class="nav-label">Manage</div>
+        <div class="nav-item"><span class="nav-icon">⚙</span>Devices & services</div>
+        <div class="nav-item"><span class="nav-icon">⌁</span>Entities</div>
+        <div class="nav-item"><span class="nav-icon">◉</span>Media</div>
+        <div class="nav-item"><span class="nav-icon">◒</span>History</div>
+        <div class="sidebar-foot"><div class="user"><span class="avatar">H</span><span>Local Home<br /><small style="color:#71859a">Owner</small></span></div></div>
+      </aside>
+      <main class="workspace">
+        <header class="topbar">
+          <div class="title-line"><img src="/brand/icon.png" alt="" /><h1>BUSY Bar <span class="crumb">/ Local playground</span></h1></div>
+          <div class="top-actions"><span class="pill online">Connected locally</span><span class="pill">busybar.local</span><span class="pill">⋮</span></div>
+        </header>
+        <div id="scene" class="scene"></div>
+      </main>
+    </div>
+
+    <script>
+      const q = new URLSearchParams(location.search);
+      const shot = q.get("shot") || "overview";
+
+      const headings = {
+        overview: ["One card, the whole Bar", "Compose useful pixels and preview the real display without leaving your dashboard.", "Playground"],
+        canvas: ["A tiny pixel studio", "Place text precisely on the 72 × 16 front or 160 × 80 rear display.", "Canvas"],
+        effects: ["Useful shortcuts. Delightfully unnecessary animations.", "Household presets and generated effects are one tap away.", "37 playful moments"],
+        games: ["Yes, it plays Pong", "Seven mini-apps turn the encoder and physical buttons into tiny game controls.", "Mini-apps"],
+        profiles: ["Focus mode that feels physical", "Edit the Bar's real Busy and Custom timer profiles from Home Assistant.", "Profiles"],
+        media: ["Local media, front to back", "Convert Home Assistant media locally and generate rear-screen QR codes without a cloud hop.", "Media + QR"],
+        native: ["A first-class Home Assistant device", "Controls, diagnostics, events, previews, notifications, media, and updates—all modeled as native entities.", "Native entities"],
+        automations: ["Automations that light up the room", "Start with thirteen blueprints, then coordinate every Bar in the house concurrently.", "Blueprints + multi-Bar"],
+      };
+
+      const qrSvg = `
+        <svg class="qr" viewBox="0 0 21 21" aria-label="QR code preview" shape-rendering="crispEdges">
+          <rect width="21" height="21" fill="#fff"/>
+          <path fill="#000" d="M1 1h7v7H1zM3 3h3v3H3zM13 1h7v7h-7zM15 3h3v3h-3zM1 13h7v7H1zM3 15h3v3H3zM10 1h2v2h-2zM9 4h3v1H9zM10 6h2v3h-2zM13 9h2v2h-2zM16 9h1v3h-1zM18 9h2v1h-2zM9 10h3v2H9zM14 12h2v2h-2zM18 12h2v3h-2zM9 14h2v2H9zM12 15h2v1h-2zM15 16h2v2h-2zM18 17h2v3h-2zM9 18h3v2H9zM12 11h1v2h-1zM17 14h1v2h-1z"/>
+          <path fill="#fff" d="M3 3h3v3H3zM15 3h3v3h-3zM3 15h3v3H3z"/>
+          <rect x="4" y="4" width="1" height="1" fill="#000"/><rect x="16" y="4" width="1" height="1" fill="#000"/><rect x="4" y="16" width="1" height="1" fill="#000"/>
+        </svg>`;
+
+      const bar = (text, sub = "", color = "cyan", dark = false, extra = "") => `
+        <div class="bar-device ${dark ? "dark" : ""} ${extra}"><span class="bar-led"></span><div class="bar-screen ${color}-glow"><span class="pixel-label">${text}</span>${sub ? `<span class="pixel-sub">${sub}</span>` : ""}</div><span class="bar-knob"></span></div>`;
+
+      const cardLayout = (aside) => `<div class="columns"><div class="panel-card playground-shell"><busybar-card id="busy-card"></busybar-card></div><div class="stack">${aside}</div></div>`;
+
+      const overviewAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Studio Bar</strong><span class="ok">● Online</span></div><div class="panel-body device-summary">
+          <div class="device-hero"><img src="/brand/icon.png" alt=""><div><h3>Ready for pixels</h3><p>LAN API 25.0.0 · firmware 1.1.1</p></div></div>
+          ${bar("NEXT", "DESIGN · 2:30")}
+          <div class="metric-grid"><div class="metric"><small>Battery</small><strong>86%</strong></div><div class="metric"><small>Wi-Fi</small><strong class="ok">Excellent</strong></div><div class="metric"><small>Timer</small><strong>Idle</strong></div></div>
+        </div></section>
+        <section class="panel-card"><div class="panel-head"><strong>Priority-aware display stack</strong><span>restores automatically</span></div><div class="panel-body layers">
+          <div class="layer"><b>P90</b><span>Focus session</span><small>25:00</small></div><div class="layer"><b>P50</b><span>Meeting reminder</span><small>waiting</small></div><div class="layer"><b>P10</b><span>Built-in clock</span><small>underneath</small></div>
+        </div></section>`;
+
+      const canvasAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Live device preview</strong><span>front · 72 × 16</span></div><div class="panel-body">${bar("HELLO!", "X 36 · Y 8", "cyan", true)}</div></section>
+        <section class="panel-card"><div class="panel-head"><strong>Two very different canvases</strong><span>pixel-perfect</span></div><div class="panel-body stack">
+          <div class="metric-grid"><div class="metric"><small>Front</small><strong>72 × 16</strong></div><div class="metric"><small>Rear</small><strong>160 × 80</strong></div><div class="metric"><small>Layers</small><strong class="cyan">Restore</strong></div></div>
+          <p class="legend">Drag the copy in the card or enter exact coordinates. The integration sends native display elements with your selected priority, timeout, and automatic restoration.</p>
+        </div></section>`;
+
+      const effectsAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Animation lab</strong><span>22 generated effects</span></div><div class="panel-body effect-grid">
+          <div class="effect-tile aurora"><span class="tile-title">Aurora</span></div><div class="effect-tile equalizer"><span class="tile-title">Equalizer</span></div><div class="effect-tile fireplace"><span class="tile-title">Fireplace</span></div><div class="effect-tile laundry"><span class="tile-title">Laundry party</span></div>
+        </div></section>
+        <section class="panel-card"><div class="panel-head"><strong>Opinionated household defaults</strong><span>15 presets</span></div><div class="panel-body"><div class="metric-grid"><div class="metric"><small>Arrivals</small><strong>Welcome</strong></div><div class="metric"><small>Chores</small><strong class="pink">Celebrate</strong></div><div class="metric"><small>Safety</small><strong class="orange">Interrupt</strong></div></div></div></section>`;
+
+      const gamesAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Tiny arcade</strong><span>physical controls included</span></div><div class="panel-body game-grid">
+          <div class="game-tile"><span class="score">1&nbsp;&nbsp;&nbsp;&nbsp;PONG&nbsp;&nbsp;&nbsp;&nbsp;2</span><i class="paddle left"></i><i class="ball"></i><i class="paddle right"></i><span class="tile-title">Encoder + buttons</span></div>
+          <div class="game-tile"><span class="snake-path">■■■■■</span><span class="tile-title">Snake</span></div>
+          <div class="game-tile reaction">GO!<span class="tile-title">Reaction</span></div>
+          <div class="game-tile"><span class="pet">◕ᴥ◕</span><span class="tile-title">Pixel pet</span></div>
+        </div></section>
+        <section class="panel-card"><div class="panel-body metric-grid"><div class="metric"><small>Quick</small><strong>Dice</strong></div><div class="metric"><small>Decide</small><strong>8-Ball</strong></div><div class="metric"><small>Classic</small><strong class="cyan">Pong</strong></div></div></section>`;
+
+      const profilesAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Today's focus</strong><span class="cyan">Work 1 of 4</span></div><div class="panel-body stack">
+          ${bar("FOCUS", "18:42", "pink", true)}
+          <div class="timeline"><div class="phase active">WORK<br>25m</div><div class="phase">REST<br>5m</div><div class="phase">WORK<br>25m</div><div class="phase">REST<br>5m</div></div>
+        </div></section>
+        <section class="panel-card"><div class="panel-head"><strong>Physical inputs</strong><span>streamed instantly</span></div><div class="panel-body controls"><div class="control"><b>↺</b><small>Encoder</small></div><div class="control"><b>OK</b><small>Button</small></div><div class="control"><b>↔</b><small>Mode</small></div></div></section>`;
+
+      const mediaAside = `
+        <section class="panel-card"><div class="panel-head"><strong>Front + rear</strong><span>converted locally</span></div><div class="panel-body qr-wrap">
+          <div class="stack">${bar("ALBUM", "NOW PLAYING", "pink", true)}<div class="media-list"><div class="media-item"><span class="media-icon">▸</span><span>celebration.gif<small>12 FPS · looping</small></span><b class="ok">Playing</b></div><div class="media-item"><span class="media-icon">♫</span><span>doorbell.mp3<small>speaker</small></span><b>0:03</b></div></div></div>
+          <div class="rear-screen">${qrSvg}</div>
+        </div></section>
+        <section class="panel-card"><div class="panel-body"><p class="legend">Media stays in the integration's isolated device namespace. Images, GIFs, videos, audio, and QR codes are prepared on Home Assistant and sent directly over your LAN.</p></div></section>`;
+
+      function nativeScene() {
+        return `<div class="columns native">
+          <section class="panel-card"><div class="panel-head"><strong>Studio Bar · 38 entities</strong><span class="ok">● Available</span></div><div class="entity-list">
+            <div class="entity-row"><span class="entity-icon">◫</span><span>Front screen<small>Live image entity</small></span><span class="entity-value cyan">Preview</span></div>
+            <div class="entity-row"><span class="entity-icon">◉</span><span>Status scene<small>Select</small></span><span class="entity-value">Focus</span></div>
+            <div class="entity-row"><span class="entity-icon">☼</span><span>Display brightness<small>Number</small></span><span class="entity-value">72%</span></div>
+            <div class="entity-row"><span class="entity-icon">♫</span><span>Speaker volume<small>Number</small></span><span class="entity-value">55%</span></div>
+            <div class="entity-row"><span class="entity-icon">⌁</span><span>Quick message<small>Text</small></span><span class="entity-value">DINNER READY</span></div>
+            <div class="entity-row"><span class="entity-icon">⌁</span><span>Automatic brightness<small>Switch</small></span><span class="toggle"></span></div>
+            <div class="entity-row"><span class="entity-icon">◌</span><span>Firmware<small>Update</small></span><span class="entity-value ok">Up to date</span></div>
+            <div class="entity-row"><span class="entity-icon">⚑</span><span>Play celebration<small>Button</small></span><span class="entity-value">Run</span></div>
+            <div class="entity-row"><span class="entity-icon">●</span><span>Busy Bar notifications<small>Notify</small></span><span class="entity-value">Ready</span></div>
+            <div class="entity-row"><span class="entity-icon">▸</span><span>Busy Bar media player<small>Media player</small></span><span class="entity-value">Idle</span></div>
+            <div class="entity-row"><span class="entity-icon">⚡</span><span>Battery<small>Sensor</small></span><span class="entity-value">86% · charging</span></div>
+            <div class="entity-row"><span class="entity-icon">▰</span><span>Focus timer<small>Sensor</small></span><span class="entity-value">18:42</span></div>
+          </div></section>
+          <div class="stack"><section class="panel-card"><div class="panel-head"><strong>Live pixels</strong><span>image entities</span></div><div class="panel-body">${bar("FOCUS", "18:42", "pink", true)}</div></section>
+          <section class="panel-card"><div class="panel-head"><strong>Recent physical events</strong><span>WebSocket</span></div><div class="panel-body event-feed"><div class="event"><b class="cyan">OK</b><span>Button pressed</span><time>now</time></div><div class="event"><b class="pink">↻</b><span>Encoder clockwise</span><time>4s</time></div><div class="event"><b class="orange">↔</b><span>Busy mode selected</span><time>12s</time></div></div></section>
+          <section class="panel-card"><div class="panel-body metric-grid"><div class="metric"><small>Connection</small><strong class="ok">Local</strong></div><div class="metric"><small>Updates</small><strong>Managed</strong></div><div class="metric"><small>Cloud</small><strong>None</strong></div></div></section></div>
+        </div>`;
+      }
+
+      function automationsScene() {
+        const blueprints = [
+          ["◷", "Next meeting countdown", "Put the next calendar event and countdown on the front display."],
+          ["▣", "Package delivered", "Celebrate a delivery, then restore whatever was showing before."],
+          ["☂", "Weather warning", "Use a high-priority alert for severe conditions nearby."],
+          ["▰", "Appliance finished", "Turn a washer, dryer, or dishwasher completion into a playful nudge."],
+          ["✓", "Daily streak", "Show habits, points, chores, and household wins on the Bar."],
+          ["◌", "Firmware available", "Surface local firmware updates when the Bar reports one."],
+        ];
+        return `<div class="columns"><section class="panel-card"><div class="panel-head"><strong>Ready-to-import automation blueprints</strong><span>13 included</span></div><div class="panel-body blueprint-grid">${blueprints.map(([icon,title,copy]) => `<div class="blueprint"><div class="bp-icon">${icon}</div><h4>${title}</h4><p>${copy}</p></div>`).join("")}</div></section>
+          <div class="stack"><section class="panel-card"><div class="panel-head"><strong>Whole-home dispatch</strong><span class="ok">3 Bars synchronized</span></div><div class="panel-body multi-bars">
+            ${bar("DINNER", "READY!", "cyan", false, "mini-bar")}
+            <div class="sync-line">concurrent LAN action</div>
+            ${bar("DINNER", "READY!", "pink", true, "mini-bar")}
+            <div class="sync-line">same preset · one automation</div>
+            ${bar("DINNER", "READY!", "cyan", false, "mini-bar")}
+          </div></section><section class="panel-card"><div class="panel-body metric-grid"><div class="metric"><small>Targets</small><strong>1 → many</strong></div><div class="metric"><small>Transport</small><strong class="ok">LAN</strong></div><div class="metric"><small>Restore</small><strong class="cyan">Automatic</strong></div></div></section></div>
+        </div>`;
+      }
+
+      function render() {
+        const [title, subtitle, tag] = headings[shot] || headings.overview;
+        const scene = document.querySelector("#scene");
+        let content;
+        if (shot === "native") content = nativeScene();
+        else if (shot === "automations") content = automationsScene();
+        else {
+          const asides = { overview: overviewAside, canvas: canvasAside, effects: effectsAside, games: gamesAside, profiles: profilesAside, media: mediaAside };
+          content = cardLayout(asides[shot] || overviewAside);
+        }
+        scene.innerHTML = `<div class="scene-heading"><div><h2>${title}</h2><p>${subtitle}</p></div><span class="tag">${tag}</span></div>${content}`;
+
+        const card = document.querySelector("#busy-card");
+        if (!card) return;
+        card.setConfig({ device_id: "studio-bar", preview_entity: "image.studio_bar_front_screen", title: "Studio Bar Playground" });
+        const screen = `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="160" viewBox="0 0 72 16"><rect width="72" height="16" fill="#020509"/><text x="4" y="7" font-family="monospace" font-weight="bold" font-size="5" fill="#22d3ee">NEXT</text><text x="4" y="13" font-family="monospace" font-weight="bold" font-size="3.6" fill="#fff">DESIGN  2:30</text><rect x="66" y="3" width="2" height="10" rx="1" fill="#f472b6"/></svg>`;
+        card.hass = { states: { "image.studio_bar_front_screen": { attributes: { entity_picture: "data:image/svg+xml," + encodeURIComponent(screen) } } }, callService: async () => {} };
+        const panel = shot === "overview" ? "compose" : shot;
+        card._selectPanel(panel);
+        const root = card.shadowRoot;
+        if (shot === "overview") {
+          root.querySelector("#widget").value = "calendar";
+          root.querySelector("#title").value = "NEXT MEETING";
+          root.querySelector("#value").value = "Design review · 2:30";
+          root.querySelector("#duration").value = "30";
+        } else if (shot === "canvas") {
+          root.querySelector("#canvas-text").value = "HELLO!";
+          root.querySelector("#canvas-x").value = "36";
+          root.querySelector("#canvas-y").value = "8";
+          card._updateCanvas();
+        } else if (shot === "profiles") {
+          root.querySelector("#profile-type").value = "interval";
+          root.querySelector("#profile-title").value = "DEEP WORK";
+        } else if (shot === "media") {
+          root.querySelector("#media-id").value = "media-source://media_source/local/celebration.gif";
+          root.querySelector("#qr-value").value = "https://homeassistant.local/guest";
+        }
+      }
+
+      window.addEventListener("load", () => customElements.whenDefined("busybar-card").then(render));
+    </script>
+  </body>
+</html>
