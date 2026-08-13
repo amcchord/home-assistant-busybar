@@ -9,6 +9,7 @@ from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, replace
 from datetime import timedelta
+from functools import partial
 from typing import Any
 from uuid import uuid4
 
@@ -69,13 +70,17 @@ class BusyBarCoordinator(DataUpdateCoordinator[BusyBarData]):
 
     config_entry: BusyBarConfigEntry
 
-    def __init__(self, hass: HomeAssistant, entry: BusyBarConfigEntry) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: BusyBarConfigEntry,
+        api: AsyncBusyBar,
+    ) -> None:
         """Initialize a coordinator."""
         scan_interval = int(
             entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         )
-        token = entry.data.get(CONF_TOKEN) or None
-        self.api = AsyncBusyBar(entry.data[CONF_HOST], token=token)
+        self.api = api
         self.default_priority = int(
             entry.options.get(CONF_DEFAULT_PRIORITY, DEFAULT_PRIORITY)
         )
@@ -104,6 +109,17 @@ class BusyBarCoordinator(DataUpdateCoordinator[BusyBarData]):
             name=DOMAIN,
             update_interval=timedelta(seconds=scan_interval),
         )
+
+    @classmethod
+    async def async_create(
+        cls, hass: HomeAssistant, entry: BusyBarConfigEntry
+    ) -> BusyBarCoordinator:
+        """Create the HTTP client off the event loop, then build a coordinator."""
+        token = entry.data.get(CONF_TOKEN) or None
+        api = await hass.async_add_executor_job(
+            partial(AsyncBusyBar, entry.data[CONF_HOST], token=token)
+        )
+        return cls(hass, entry, api)
 
     async def _async_update_data(self) -> BusyBarData:
         """Fetch all useful local state."""
@@ -352,14 +368,21 @@ class BusyBarCoordinator(DataUpdateCoordinator[BusyBarData]):
         for listener in list(self._stream_listeners):
             listener(event)
 
-    async def _async_draw_immediate(self, payload: dict[str, Any]) -> None:
+    async def _async_draw_immediate(
+        self, payload: dict[str, Any], replace: bool
+    ) -> None:
         """Draw one compositor-selected layer immediately."""
         payload = {**payload, "application_name": APPLICATION_NAME}
         async with self._draw_lock:
+            if replace:
+                await self._async_command(
+                    self.api.display_clear(application_name=APPLICATION_NAME),
+                    "clear Home Assistant display content",
+                )
             await self._async_command(
                 self.api.display_draw(
                     payload,
-                    clear_before_draw=True,
+                    clear_before_draw=False,
                     sanitize_text=True,
                 ),
                 "draw on the display",
@@ -525,6 +548,7 @@ class BusyBarCoordinator(DataUpdateCoordinator[BusyBarData]):
         duration: float,
     ) -> None:
         frame_delay = 1 / max(2, min(12, fps))
+        next_frame_at = asyncio.get_running_loop().time()
         completed = False
         layer_id: str | None = None
         try:
@@ -545,7 +569,10 @@ class BusyBarCoordinator(DataUpdateCoordinator[BusyBarData]):
                     self._effect_layer_id = layer_id
                 else:
                     await self.display_manager.async_update(layer_id, frame)
-                await asyncio.sleep(frame_delay)
+                next_frame_at += frame_delay
+                await asyncio.sleep(
+                    max(0, next_frame_at - asyncio.get_running_loop().time())
+                )
             completed = True
         finally:
             if layer_id is not None:

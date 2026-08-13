@@ -38,7 +38,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: BusyBarConfigEntry) -> bool:
     """Set up a BUSY Bar config entry."""
-    coordinator = BusyBarCoordinator(hass, entry)
+    coordinator = await BusyBarCoordinator.async_create(hass, entry)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     entry.async_on_unload(entry.add_update_listener(_async_reload_entry))

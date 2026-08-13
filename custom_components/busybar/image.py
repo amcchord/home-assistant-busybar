@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from io import BytesIO
+from math import ceil
 
 from busylib import display as busy_display
 from homeassistant.components.image import ImageEntity
@@ -13,6 +14,8 @@ from PIL import Image as PILImage
 
 from .coordinator import BusyBarConfigEntry, BusyBarCoordinator
 from .entity import BusyBarEntity
+
+_PREVIEW_MIN_WIDTH = 640
 
 
 async def async_setup_entry(
@@ -64,8 +67,9 @@ class BusyBarScreenImage(BusyBarEntity, ImageEntity):
         expected = spec.width * spec.height * 3
         if not isinstance(raw, bytes) or len(raw) != expected:
             return None
+        scale = max(1, ceil(_PREVIEW_MIN_WIDTH / spec.width))
         return await self.hass.async_add_executor_job(
-            _frame_to_png, raw, spec.width, spec.height
+            _frame_to_png, raw, spec.width, spec.height, scale
         )
 
     @callback
@@ -79,9 +83,17 @@ class BusyBarScreenImage(BusyBarEntity, ImageEntity):
         super()._handle_coordinator_update()
 
 
-def _frame_to_png(raw: bytes, width: int, height: int) -> bytes:
-    """Encode decoded RGB888 framebuffer bytes as PNG."""
-    image = PILImage.frombytes("RGB", (width, height), raw)
+def _frame_to_png(raw: bytes, width: int, height: int, scale: int = 1) -> bytes:
+    """Encode a BGR888 framebuffer as a crisp, desktop-friendly PNG."""
+    # BUSY Bar exposes its front framebuffer in native BGR byte order even
+    # though the API describes the decoded payload as RGB888.  Tell Pillow the
+    # real source layout so red and blue are not exchanged in the PNG preview.
+    image = PILImage.frombytes("RGB", (width, height), raw, "raw", "BGR")
+    if scale > 1:
+        image = image.resize(
+            (width * scale, height * scale),
+            resample=PILImage.Resampling.NEAREST,
+        )
     output = BytesIO()
     image.save(output, format="PNG", optimize=True)
     return output.getvalue()
