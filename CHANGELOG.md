@@ -2,6 +2,10 @@
 
 All notable changes to BUSY Bar for Home Assistant are documented here.
 
+## 0.2.2
+
+- Correct the BUSY Bar framebuffer's native BGR byte order when generating front and rear screen PNGs, so red and blue—and therefore yellow and cyan—render accurately.
+
 ## 0.2.1
 
 - Update animation frames in place instead of globally clearing the Bar between every frame, eliminating the flicker and avoiding fights with the selected device app.

@@ -84,8 +84,11 @@ class BusyBarScreenImage(BusyBarEntity, ImageEntity):
 
 
 def _frame_to_png(raw: bytes, width: int, height: int, scale: int = 1) -> bytes:
-    """Encode an RGB888 framebuffer as a crisp, desktop-friendly PNG."""
-    image = PILImage.frombytes("RGB", (width, height), raw)
+    """Encode a BGR888 framebuffer as a crisp, desktop-friendly PNG."""
+    # BUSY Bar exposes its front framebuffer in native BGR byte order even
+    # though the API describes the decoded payload as RGB888.  Tell Pillow the
+    # real source layout so red and blue are not exchanged in the PNG preview.
+    image = PILImage.frombytes("RGB", (width, height), raw, "raw", "BGR")
     if scale > 1:
         image = image.resize(
             (width * scale, height * scale),

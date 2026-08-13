@@ -7,13 +7,39 @@ from PIL import Image
 from custom_components.busybar.image import _frame_to_png
 
 
-def test_frame_preview_uses_crisp_nearest_neighbor_scaling() -> None:
-    """Tiny framebuffers open large without introducing blurry colors."""
-    raw = bytes((255, 0, 0, 0, 255, 0))
+def test_frame_preview_converts_bgr_and_uses_crisp_scaling() -> None:
+    """BGR framebuffers open large with accurate, unblurred colors."""
+    # Red, green, blue, yellow, cyan, and magenta encoded as BGR888.
+    raw = bytes(
+        (
+            0,
+            0,
+            255,
+            0,
+            255,
+            0,
+            255,
+            0,
+            0,
+            0,
+            255,
+            255,
+            255,
+            255,
+            0,
+            255,
+            0,
+            255,
+        )
+    )
 
-    with Image.open(BytesIO(_frame_to_png(raw, 2, 1, 3))) as image:
-        assert image.size == (6, 3)
+    with Image.open(BytesIO(_frame_to_png(raw, 6, 1, 3))) as image:
+        assert image.size == (18, 3)
         assert image.getpixel((0, 1)) == (255, 0, 0)
         assert image.getpixel((2, 1)) == (255, 0, 0)
         assert image.getpixel((3, 1)) == (0, 255, 0)
-        assert image.getpixel((5, 1)) == (0, 255, 0)
+        assert image.getpixel((6, 1)) == (0, 0, 255)
+        assert image.getpixel((9, 1)) == (255, 255, 0)
+        assert image.getpixel((12, 1)) == (0, 255, 255)
+        assert image.getpixel((15, 1)) == (255, 0, 255)
+        assert image.getpixel((17, 1)) == (255, 0, 255)
