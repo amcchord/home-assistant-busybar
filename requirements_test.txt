@@ -3,4 +3,4 @@ home-assistant-frontend==20260729.6
 segno==1.6.6
 pytest-cov==7.1.0
 pytest-homeassistant-custom-component==0.13.355
-ruff==0.15.21
+ruff==0.17.1
