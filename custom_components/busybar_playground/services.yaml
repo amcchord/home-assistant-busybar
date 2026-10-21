@@ -4,7 +4,7 @@ show_message:
       required: true
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
           multiple: true
     message:
       required: true

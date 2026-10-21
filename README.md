@@ -1,9 +1,9 @@
-# BUSY Bar for Home Assistant
+# BUSY Bar Playground for Home Assistant
 
 [![Release](https://img.shields.io/github/v/release/amcchord/home-assistant-busybar?style=flat-square)](https://github.com/amcchord/home-assistant-busybar/releases)
 [![Validate](https://img.shields.io/github/actions/workflow/status/amcchord/home-assistant-busybar/validate.yml?branch=main&label=validate&style=flat-square)](https://github.com/amcchord/home-assistant-busybar/actions/workflows/validate.yml)
 [![Tests](https://img.shields.io/github/actions/workflow/status/amcchord/home-assistant-busybar/test.yml?branch=main&label=tests&style=flat-square)](https://github.com/amcchord/home-assistant-busybar/actions/workflows/test.yml)
-[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5?style=flat-square)](#installation)
+[![HACS](https://img.shields.io/badge/HACS-Integration-41BDF5?style=flat-square)](#installation)
 [![License](https://img.shields.io/github/license/amcchord/home-assistant-busybar?style=flat-square)](LICENSE)
 
 A local-first, unusually playful [BUSY Bar](https://busy.app) integration for [Home Assistant](https://www.home-assistant.io). It turns the Bar's displays, LED, speaker, timer, switch, encoder, and buttons into first-class Home Assistant building blocks—without putting a cloud service in the control path.
@@ -25,16 +25,18 @@ Everyday operation is LAN-only. There is no BUSY account requirement, telemetry,
 
 ### HACS
 
-Until the project is listed in HACS defaults, add it as a custom repository:
+Search HACS for **BUSY Bar Playground** by **amcchord**, install it, and restart Home Assistant. If it is not in your catalog, use the repository button below or add it manually:
 
 1. Open **HACS → Integrations**.
 2. Open the three-dot menu and choose **Custom repositories**.
 3. Add `https://github.com/amcchord/home-assistant-busybar` as an **Integration**.
-4. Install **BUSY Bar**, then restart Home Assistant.
+4. Install **BUSY Bar Playground**, then restart Home Assistant.
 
 [![Open your Home Assistant instance and add this repository to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=amcchord&repository=home-assistant-busybar&category=integration)
 
-For a manual install, copy `custom_components/busybar` into the same directory under your Home Assistant configuration and restart.
+For a manual install, copy `custom_components/busybar_playground` into the same directory under your Home Assistant configuration and restart.
+
+**Upgrading from v0.2.0 or earlier?** The integration domain changed from `busybar` to `busybar_playground` in v0.3.0. You must remove this repository's old config entries and set up **BUSY Bar Playground** again. Follow the [migration guide](docs/migration-v0.3.0.md) before upgrading; actions, events, device triggers, dashboard cards, and imported blueprints need updating too.
 
 ## Setup
 
@@ -44,7 +46,7 @@ In the BUSY Bar's local web interface, open the HTTP API settings and enable Wi-
 - **Key:** enter the 4–10 digit local API key during setup.
 - **Off:** protected endpoints are unavailable; the Home Assistant setup flow explains how to enable them.
 
-Then go to **Settings → Devices & services → Add integration**, search for **BUSY Bar**, and enter the local address. DHCP discovery may already have found it. Key mode is recommended on shared or untrusted LANs; the key stays in Home Assistant and is sent only to the Bar.
+Then go to **Settings → Devices & services → Add integration**, search for **BUSY Bar Playground**, and enter the local address. DHCP discovery may already have found it. Key mode is recommended on shared or untrusted LANs; the key stays in Home Assistant and is sent only to the Bar.
 
 ## Home Assistant surface
 
@@ -66,7 +68,7 @@ Physical events are also offered as visual device triggers, so automations can s
 The integration serves and registers its dashboard card automatically. Add a manual card to a dashboard:
 
 ```yaml
-type: custom:busybar-card
+type: custom:busybar-playground-card
 device_id: YOUR_DEVICE_ID
 preview_entity: image.your_busy_bar_front_screen
 title: Studio Bar
@@ -99,16 +101,16 @@ Temporary Home Assistant layers wait behind higher-priority content, keep their 
 
 Home Assistant exposes every action through the visual automation editor. Highlights include:
 
-- `busybar.show_widget`, `show_message`, `show_progress`, and advanced `draw`;
-- `busybar.play_preset`, `play_effect`, and `play_game`;
-- `busybar.show_media`, `play_media`, `show_qr`, `play_sound`, and `stop_sound`;
-- `busybar.start_focus`, `set_profile`, and `send_key`;
-- `busybar.check_update`, `abort_update`, `clear_display`, and `delete_assets`.
+- `busybar_playground.show_widget`, `show_message`, `show_progress`, and advanced `draw`;
+- `busybar_playground.play_preset`, `play_effect`, and `play_game`;
+- `busybar_playground.show_media`, `play_media`, `show_qr`, `play_sound`, and `stop_sound`;
+- `busybar_playground.start_focus`, `set_profile`, and `send_key`;
+- `busybar_playground.check_update`, `abort_update`, `clear_display`, and `delete_assets`.
 
 Try an opinionated default:
 
 ```yaml
-action: busybar.play_preset
+action: busybar_playground.play_preset
 data:
   device_id:
     - YOUR_DEVICE_ID
@@ -119,7 +121,7 @@ data:
 Or show a widget that restores the prior display after 30 seconds:
 
 ```yaml
-action: busybar.show_widget
+action: busybar_playground.show_widget
 data:
   device_id: YOUR_DEVICE_ID
   widget: progress
@@ -131,7 +133,7 @@ data:
   restore: true
 ```
 
-`busybar.draw` accepts the official API's `DisplayElements` body minus `application_name`; the integration supplies its isolated `home_assistant` ownership name. See the [BUSY Bar API reference](https://api.busy.app/busybar/docs) for the raw element schema.
+`busybar_playground.draw` accepts the official API's `DisplayElements` body minus `application_name`; the integration supplies its isolated `home_assistant` ownership name. See the [BUSY Bar API reference](https://api.busy.app/busybar/docs) for the raw element schema.
 
 ## Blueprints
 
@@ -180,7 +182,8 @@ pip install -r requirements_test.txt
 pytest
 ruff check .
 ruff format --check .
-deno check custom_components/busybar/www/busybar-card.js
+deno check custom_components/busybar_playground/www/busybar-playground-card.js
+deno test --allow-read tests/test_card.js
 ```
 
 CI also runs HACS validation and hassfest. The test suite validates every scene, effect, preset, widget on both screens, stream event decoding, display restoration, media generation, bundled blueprint, config flow, entity setup, translations, and manifest contracts.

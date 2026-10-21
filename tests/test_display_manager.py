@@ -2,7 +2,7 @@
 
 import asyncio
 
-from custom_components.busybar.display_manager import BusyBarDisplayManager
+from custom_components.busybar_playground.display_manager import BusyBarDisplayManager
 
 
 def _payload(name: str, priority: int) -> dict:

@@ -5,7 +5,7 @@ from io import BytesIO
 from homeassistant.core import HomeAssistant
 from PIL import Image
 
-from custom_components.busybar.media import async_qr_png
+from custom_components.busybar_playground.media import async_qr_png
 
 
 async def test_qr_code_is_local_png(hass: HomeAssistant) -> None:

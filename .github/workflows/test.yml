@@ -28,6 +28,19 @@ jobs:
       - name: Ruff format
         run: ruff format --check .
       - name: Dashboard card syntax
-        run: deno check custom_components/busybar/www/busybar-card.js
+        run: deno check custom_components/busybar_playground/www/busybar-playground-card.js
+      - name: Dashboard card regression
+        run: deno test --allow-read tests/test_card.js
       - name: Tests
         run: pytest --cov --cov-report=term-missing --cov-report=xml
+      - name: Check out catalog BUSY Bar for coexistence regression
+        uses: actions/checkout@v5
+        with:
+          repository: pickerin/hass-busybar
+          ref: 91a74bc9cace3c05bc64026c1074ce44c2e40862
+          path: .compat/pickerin
+          persist-credentials: false
+      - name: Actual catalog integration coexistence
+        env:
+          PYTHONPATH: ${{ github.workspace }}/.compat/pickerin:${{ github.workspace }}
+        run: pytest tests/compatibility/check_catalog_coexistence.py

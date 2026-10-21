@@ -95,7 +95,7 @@ class BusyBarCard extends HTMLElement {
   }
 
   static getConfigElement() {
-    return document.createElement("busybar-card-editor");
+    return document.createElement("busybar-playground-card-editor");
   }
 
   static getStubConfig() {
@@ -358,7 +358,7 @@ class BusyBarCard extends HTMLElement {
     const panel = this.shadowRoot.querySelector(".panel:not(.hidden)");
     const toast = panel?.querySelector(".toast");
     try {
-      await this._hass.callService("busybar", service, { device_id: [this._config.device_id], ...data });
+      await this._hass.callService("busybar_playground", service, { device_id: [this._config.device_id], ...data });
       if (toast) toast.textContent = `${this._label(service)} sent`;
     } catch (error) {
       if (toast) toast.textContent = error?.message || String(error);
@@ -410,7 +410,7 @@ class BusyBarCardEditor extends HTMLElement {
   }
 }
 
-customElements.define("busybar-card", BusyBarCard);
-customElements.define("busybar-card-editor", BusyBarCardEditor);
+customElements.define("busybar-playground-card", BusyBarCard);
+customElements.define("busybar-playground-card-editor", BusyBarCardEditor);
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "busybar-card", name: "BUSY Bar Playground", description: "Compose widgets, effects, and tiny games for a local BUSY Bar", preview: true });
+window.customCards.push({ type: "busybar-playground-card", name: "BUSY Bar Playground", description: "Compose widgets, effects, and tiny games for a local BUSY Bar", preview: true });

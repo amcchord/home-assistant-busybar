@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     appliance:
       name: Running sensor
       selector:
@@ -36,7 +36,7 @@ triggers:
     to: "off"
 
 actions:
-  - action: busybar.play_effect
+  - action: busybar_playground.play_effect
     data:
       device_id: !input busybar_device
       effect: !input effect

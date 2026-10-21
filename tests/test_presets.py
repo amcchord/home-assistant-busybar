@@ -2,8 +2,8 @@
 
 import pytest
 
-from custom_components.busybar.const import EFFECTS
-from custom_components.busybar.presets import PRESETS, preset_spec
+from custom_components.busybar_playground.const import EFFECTS
+from custom_components.busybar_playground.presets import PRESETS, preset_spec
 
 
 @pytest.mark.parametrize("preset", PRESETS)

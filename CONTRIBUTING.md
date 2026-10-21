@@ -18,8 +18,19 @@ pip install -r requirements_test.txt
 pytest
 ruff check .
 ruff format --check .
-deno check custom_components/busybar/www/busybar-card.js
+deno check custom_components/busybar_playground/www/busybar-playground-card.js
+deno test --allow-read tests/test_card.js
 ```
+
+CI also loads both this integration and the actual `pickerin/hass-busybar` integration, pinned to v0.6.10 commit `91a74bc9cace3c05bc64026c1074ce44c2e40862`, in one Home Assistant instance with mocked device APIs. To reproduce:
+
+```bash
+git clone --no-checkout https://github.com/pickerin/hass-busybar.git .compat/pickerin
+git -C .compat/pickerin checkout 91a74bc9cace3c05bc64026c1074ce44c2e40862
+PYTHONPATH="$PWD/.compat/pickerin:$PWD" pytest tests/compatibility/check_catalog_coexistence.py
+```
+
+This verifies software loading, entity registration, service routing, separate card URLs, and independent unloading. It does not exercise physical hardware or simultaneous display commands.
 
 ## Pull requests
 

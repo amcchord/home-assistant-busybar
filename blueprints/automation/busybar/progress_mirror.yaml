@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     progress_entity:
       name: Progress entity
       selector:
@@ -30,7 +30,7 @@ conditions:
     value_template: "{{ trigger.to_state.state | float(none) is not none }}"
 
 actions:
-  - action: busybar.show_progress
+  - action: busybar_playground.show_progress
     data:
       device_id: !input busybar_device
       value: "{{ trigger.to_state.state | float(0) }}"

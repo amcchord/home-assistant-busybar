@@ -5,7 +5,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["custom_components.busybar"]
+source = ["custom_components.busybar_playground"]
 
 [tool.coverage.report]
 exclude_also = [
@@ -29,4 +29,4 @@ ignore = [
 "tests/**" = ["S101", "SLF001"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["custom_components.busybar"]
+known-first-party = ["custom_components.busybar_playground"]

@@ -38,7 +38,7 @@ triggers:
     event: start
     offset: "-00:05:00"
 actions:
-  - action: busybar.show_widget
+  - action: busybar_playground.show_widget
     data:
       device_id: YOUR_DEVICE_ID
       widget: countdown
@@ -65,7 +65,7 @@ conditions:
   - condition: template
     value_template: "{{ trigger.to_state.state | float(none) is not none }}"
 actions:
-  - action: busybar.show_widget
+  - action: busybar_playground.show_widget
     data:
       device_id: YOUR_DEVICE_ID
       widget: progress
@@ -78,7 +78,7 @@ actions:
       layer_id: printer-progress
 ```
 
-Call `busybar.clear_display` when the job ends, or replace this with a completion preset.
+Call `busybar_playground.clear_display` when the job ends, or replace this with a completion preset.
 
 ## Household presets
 
@@ -90,7 +90,7 @@ triggers:
     from: "on"
     to: "off"
 actions:
-  - action: busybar.play_preset
+  - action: busybar_playground.play_preset
     data:
       device_id: YOUR_DEVICE_ID
       preset: laundry_done
@@ -101,13 +101,13 @@ Preset names are `someone_is_here`, `package_delivered`, `laundry_done`, `dinner
 
 ## Use the physical controls
 
-Device triggers are easiest to choose in the visual automation editor. The same events are also fired on the Home Assistant bus as `busybar_event`:
+Device triggers are easiest to choose in the visual automation editor. The same events are also fired on the Home Assistant bus as `busybar_playground_event`:
 
 ```yaml
 alias: BUSY Bar — encoder dims the office
 triggers:
   - trigger: event
-    event_type: busybar_event
+    event_type: busybar_playground_event
     event_data:
       source: encoder
       type: counterclockwise
@@ -124,7 +124,7 @@ Event data includes `entry_id`, `category`, `type`, and `source`, plus details s
 ## Coordinate multiple Bars
 
 ```yaml
-action: busybar.play_effect
+action: busybar_playground.play_effect
 data:
   device_id:
     - DEVICE_ID_OFFICE
@@ -148,7 +148,7 @@ triggers:
     entity_id: binary_sensor.smoke_alarm
     to: "on"
 actions:
-  - action: busybar.play_preset
+  - action: busybar_playground.play_preset
     data:
       device_id: YOUR_DEVICE_ID
       preset: alarm
@@ -165,7 +165,7 @@ triggers:
   - trigger: tag
     tag_id: YOUR_TAG_ID
 actions:
-  - action: busybar.start_focus
+  - action: busybar_playground.start_focus
     data:
       device_id: YOUR_DEVICE_ID
       minutes: 25

@@ -4,11 +4,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from busylib import types
 from busylib.features import DeviceSnapshot
+from homeassistant.components.frontend import DATA_EXTRA_MODULE_URL
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.busybar.const import CONF_TOKEN, DOMAIN
+from custom_components.busybar_playground.const import CONF_TOKEN, DOMAIN
 
 
 async def test_setup_and_unload_entry(hass: HomeAssistant) -> None:
@@ -98,21 +99,30 @@ async def test_setup_and_unload_entry(hass: HomeAssistant) -> None:
     entry.add_to_hass(hass)
 
     with (
-        patch("custom_components.busybar.coordinator.AsyncBusyBar", return_value=api),
         patch(
-            "custom_components.busybar.coordinator.collect_device_snapshot",
+            "custom_components.busybar_playground.coordinator.AsyncBusyBar",
+            return_value=api,
+        ),
+        patch(
+            "custom_components.busybar_playground.coordinator.collect_device_snapshot",
             AsyncMock(return_value=snapshot),
         ),
         patch(
-            "custom_components.busybar.coordinator.BusyBarCoordinator.async_start_stream"
+            "custom_components.busybar_playground.coordinator.BusyBarCoordinator.async_start_stream"
         ),
         patch(
-            "custom_components.busybar.discovery.async_load_platform",
+            "custom_components.busybar_playground.discovery.async_load_platform",
             AsyncMock(return_value=None),
         ),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
+
+        modules = hass.data[DATA_EXTRA_MODULE_URL]
+        assert any(
+            url.startswith(f"/{DOMAIN}/busybar-playground-card.js?v=")
+            for url in getattr(modules, "urls", modules)
+        )
 
         assert hass.states.get("sensor.office_bar_battery").state == "77"
         assert hass.states.get("binary_sensor.office_bar_charging").state == "on"
@@ -173,7 +183,7 @@ async def test_setup_and_unload_entry(hass: HomeAssistant) -> None:
         assert payload["priority"] == 37
 
         with patch(
-            "custom_components.busybar.hass_notify.async_reload",
+            "custom_components.busybar_playground.hass_notify.async_reload",
             AsyncMock(return_value=None),
         ):
             assert await hass.config_entries.async_unload(entry.entry_id)

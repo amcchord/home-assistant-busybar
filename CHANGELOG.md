@@ -2,6 +2,18 @@
 
 All notable changes to BUSY Bar for Home Assistant are documented here.
 
+## 0.3.0
+
+### Breaking change: unique integration domain
+
+- Rename this integration to **BUSY Bar Playground**, using `custom_components/busybar_playground` and the `busybar_playground` domain, to avoid overwriting `pickerin/hass-busybar`'s `busybar` component.
+- Move every custom action and device trigger to `busybar_playground`, device selectors to the new integration, and physical-input bus events to `busybar_playground_event`.
+- Serve the dashboard module at `/busybar_playground/busybar-playground-card.js` and register `custom:busybar-playground-card`, avoiding the existing integration's card element names.
+- Update all 13 bundled blueprints, examples, CI paths, and regression tests. Blueprint source paths remain stable for re-imports.
+- Preserve the BUSY Bar firmware discovery identifiers and the existing device-side `home_assistant` media/display ownership namespace.
+
+**Existing custom-repository users must set up the integration again.** Before upgrading, back up Home Assistant and record device addresses, API keys, options, and automation/dashboard references; remove only this repository's old BUSY Bar entries. After upgrading and restarting, add BUSY Bar Playground, reselect devices/entities, change `busybar.*` actions and device triggers to `busybar_playground.*` / `busybar_playground`, change `busybar_event` to `busybar_playground_event`, update dashboard cards, and re-import blueprints. Do not remove `pickerin/hass-busybar` entries or files. See the [step-by-step migration and rollback guide](docs/migration-v0.3.0.md).
+
 ## 0.2.0
 
 ### Local interaction
