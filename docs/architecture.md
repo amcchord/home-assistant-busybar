@@ -25,7 +25,7 @@ The stream normalizer turns firmware messages into a stable internal event model
 - Busy, Custom, Off, Apps, and Settings switch positions;
 - timer started, paused, resumed, phase changed, finished, and stopped.
 
-These events feed event entities, Home Assistant device triggers, the `busybar_event` bus event, and interactive mini-apps. Protobuf zero-valued enums and compressed timer envelopes are handled explicitly. Malformed envelopes are ignored at the trust boundary rather than taking down the stream.
+These events feed event entities, Home Assistant device triggers, the `busybar_playground_event` bus event, and interactive mini-apps. Protobuf zero-valued enums and compressed timer envelopes are handled explicitly. Malformed envelopes are ignored at the trust boundary rather than taking down the stream.
 
 ## Display compositor
 

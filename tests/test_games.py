@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from busylib import types
 
-from custom_components.busybar.games import run_game
-from custom_components.busybar.stream import BusyBarStreamEvent
+from custom_components.busybar_playground.games import run_game
+from custom_components.busybar_playground.stream import BusyBarStreamEvent
 
 
 def _input(category: str, event_type: str, source: str) -> BusyBarStreamEvent:
@@ -22,7 +22,7 @@ async def test_instant_apps_render_valid_payloads(game: str) -> None:
     async def render(payload: dict) -> None:
         frames.append(payload)
 
-    with patch("custom_components.busybar.games.asyncio.sleep", AsyncMock()):
+    with patch("custom_components.busybar_playground.games.asyncio.sleep", AsyncMock()):
         await run_game(
             game,
             render,
@@ -44,7 +44,7 @@ async def test_reaction_detects_an_early_physical_press() -> None:
     async def render(payload: dict) -> None:
         frames.append(payload)
 
-    with patch("custom_components.busybar.games.asyncio.sleep", AsyncMock()):
+    with patch("custom_components.busybar_playground.games.asyncio.sleep", AsyncMock()):
         await run_game("reaction", render, events, duration=4, fps=8)
     assert len(frames) == 2
     assert frames[-1]["elements"][-1]["text"] == "TOO SOON!"
@@ -70,10 +70,10 @@ async def test_interactive_games_consume_encoder_events(
 
     with (
         patch(
-            "custom_components.busybar.games.time.monotonic",
+            "custom_components.busybar_playground.games.time.monotonic",
             side_effect=[0.0, 0.0, 2.0],
         ),
-        patch("custom_components.busybar.games.asyncio.sleep", AsyncMock()),
+        patch("custom_components.busybar_playground.games.asyncio.sleep", AsyncMock()),
     ):
         await run_game(game, render, events, duration=1, fps=8)
     assert len(frames) == 1

@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     update_entity:
       name: BUSY Bar firmware update entity
       selector:
@@ -20,7 +20,7 @@ triggers:
     to: "on"
 
 actions:
-  - action: busybar.show_widget
+  - action: busybar_playground.show_widget
     data:
       device_id: !input busybar_device
       widget: entity

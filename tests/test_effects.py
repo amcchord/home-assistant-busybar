@@ -3,8 +3,8 @@
 import pytest
 from busylib import types
 
-from custom_components.busybar.const import EFFECTS, SCENES
-from custom_components.busybar.effects import (
+from custom_components.busybar_playground.const import EFFECTS, SCENES
+from custom_components.busybar_playground.effects import (
     effect_frames,
     message_payload,
     normalize_color,

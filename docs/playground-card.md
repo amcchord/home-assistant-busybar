@@ -7,7 +7,7 @@ The integration bundles a dashboard card and registers its JavaScript module dur
 Add a manual dashboard card:
 
 ```yaml
-type: custom:busybar-card
+type: custom:busybar-playground-card
 device_id: YOUR_DEVICE_ID
 preview_entity: image.your_busy_bar_front_screen
 title: BUSY Bar Playground
@@ -15,7 +15,7 @@ title: BUSY Bar Playground
 
 Find the device ID in the URL while viewing the BUSY Bar device page, or select it in a visual action and inspect the generated YAML. The preview entity is optional but recommended.
 
-If the custom card type is not immediately available after upgrading, reload the browser without cache or restart Home Assistant. The module URL is `/busybar/busybar-card.js` and includes the integration version as a cache key.
+If the custom card type is not immediately available after upgrading, reload the browser without cache or restart Home Assistant. The module URL is `/busybar_playground/busybar-playground-card.js` and includes the integration version as a cache key.
 
 ## Compose
 
@@ -32,7 +32,7 @@ Widgets restore the previous eligible display layer after they expire.
 
 ## Canvas
 
-Canvas maps directly onto the physical resolution: 72×16 on the front and 160×80 on the rear. Drag the text in the preview or enter exact X/Y coordinates, choose a firmware font and colors, then draw. This is intended for quick compositions; `busybar.draw` remains available for multi-element rectangles, images, animations, and countdowns.
+Canvas maps directly onto the physical resolution: 72×16 on the front and 160×80 on the rear. Drag the text in the preview or enter exact X/Y coordinates, choose a firmware font and colors, then draw. This is intended for quick compositions; `busybar_playground.draw` remains available for multi-element rectangles, images, animations, and countdowns.
 
 ## Effects and household shortcuts
 
@@ -46,7 +46,7 @@ Dice, Coin Flip, Magic 8-Ball, and Pixel Pet are one-shot mini-apps. Reaction ac
 
 ## Profiles
 
-The profile editor changes the timer profile physically stored in the Busy or Custom switch slot. Infinite, simple, and work/rest interval timers are supported. These are persistent device settings, unlike the one-off `busybar.start_focus` action.
+The profile editor changes the timer profile physically stored in the Busy or Custom switch slot. Infinite, simple, and work/rest interval timers are supported. These are persistent device settings, unlike the one-off `busybar_playground.start_focus` action.
 
 ## Media and QR
 

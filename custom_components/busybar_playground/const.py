@@ -6,12 +6,12 @@ from typing import Final
 
 from homeassistant.const import Platform
 
-DOMAIN: Final = "busybar"
-NAME: Final = "BUSY Bar"
-VERSION: Final = "0.2.0"
+DOMAIN: Final = "busybar_playground"
+NAME: Final = "BUSY Bar Playground"
+VERSION: Final = "0.3.0"
 MANUFACTURER: Final = "BUSY"
 APPLICATION_NAME: Final = "home_assistant"
-EVENT_BUSYBAR: Final = "busybar_event"
+EVENT_BUSYBAR: Final = "busybar_playground_event"
 
 CONF_TOKEN: Final = "token"
 CONF_SCAN_INTERVAL: Final = "scan_interval"

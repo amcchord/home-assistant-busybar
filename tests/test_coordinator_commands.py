@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from busylib.exceptions import BusyBarAPIError
 
-from custom_components.busybar.coordinator import BusyBarCoordinator
+from custom_components.busybar_playground.coordinator import BusyBarCoordinator
 
 
 def _bare_coordinator() -> BusyBarCoordinator:
@@ -54,7 +54,7 @@ async def test_pairing_qr_uses_owned_asset_and_rear_screen() -> None:
     coordinator.async_upload_asset = AsyncMock()
     coordinator.async_show_asset = AsyncMock()
     with patch(
-        "custom_components.busybar.media.async_qr_png",
+        "custom_components.busybar_playground.media.async_qr_png",
         AsyncMock(return_value=("pairing.png", b"png")),
     ):
         await coordinator.async_start_smart_home_pairing()

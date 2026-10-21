@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     air_quality_sensor:
       name: Air quality sensor
       selector:
@@ -33,7 +33,7 @@ triggers:
     above: !input threshold
 
 actions:
-  - action: busybar.play_preset
+  - action: busybar_playground.play_preset
     data:
       device_id: !input busybar_device
       preset: air_quality_warning

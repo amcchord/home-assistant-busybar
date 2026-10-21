@@ -6,7 +6,7 @@ import json
 
 from busylib import types
 
-from custom_components.busybar.stream import (
+from custom_components.busybar_playground.stream import (
     parse_input_events,
     parse_timer_snapshot,
     timer_transition_events,

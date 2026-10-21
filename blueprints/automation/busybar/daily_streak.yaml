@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     streak_entity:
       name: Streak or points sensor
       selector:
@@ -33,7 +33,7 @@ conditions:
     value_template: "{{ trigger.to_state.state | float(none) is not none }}"
 
 actions:
-  - action: busybar.show_widget
+  - action: busybar_playground.show_widget
     data:
       device_id: !input busybar_device
       widget: streak

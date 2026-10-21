@@ -25,14 +25,14 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         await hass.http.async_register_static_paths(
             [
                 StaticPathConfig(
-                    "/busybar/busybar-card.js",
-                    str(Path(__file__).parent / "www" / "busybar-card.js"),
+                    f"/{DOMAIN}/busybar-playground-card.js",
+                    str(Path(__file__).parent / "www" / "busybar-playground-card.js"),
                     cache_headers=True,
                 )
             ]
         )
     hass.data.setdefault(DATA_EXTRA_MODULE_URL, set())
-    add_extra_js_url(hass, f"/busybar/busybar-card.js?v={VERSION}")
+    add_extra_js_url(hass, f"/{DOMAIN}/busybar-playground-card.js?v={VERSION}")
     return True
 
 

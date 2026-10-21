@@ -5,7 +5,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from busylib import types
 
-from custom_components.busybar.widgets import WIDGETS, widget_payload
+from custom_components.busybar_playground.widgets import WIDGETS, widget_payload
 
 
 @pytest.mark.parametrize("widget", WIDGETS)

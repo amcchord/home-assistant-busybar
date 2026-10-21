@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     calendar:
       name: Calendar
       selector:
@@ -29,7 +29,7 @@ triggers:
     offset: "-00:05:00"
 
 actions:
-  - action: busybar.show_widget
+  - action: busybar_playground.show_widget
     data:
       device_id: !input busybar_device
       widget: countdown

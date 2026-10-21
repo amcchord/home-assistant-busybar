@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     warning_sensor:
       name: Weather warning sensor
       selector:
@@ -25,7 +25,7 @@ triggers:
     to: "on"
 
 actions:
-  - action: busybar.play_preset
+  - action: busybar_playground.play_preset
     data:
       device_id: !input busybar_device
       preset: weather_warning

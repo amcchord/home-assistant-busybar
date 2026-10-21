@@ -2,7 +2,10 @@
 
 import pytest
 
-from custom_components.busybar.device_trigger import TRIGGER_TYPES, _event_match
+from custom_components.busybar_playground.device_trigger import (
+    TRIGGER_TYPES,
+    _event_match,
+)
 
 
 def test_all_physical_and_timer_triggers_are_advertised() -> None:

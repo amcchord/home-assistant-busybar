@@ -7,7 +7,7 @@ blueprint:
       name: BUSY Bar
       selector:
         device:
-          integration: busybar
+          integration: busybar_playground
     focus_scene:
       name: Focus scene
       selector:
@@ -16,7 +16,7 @@ blueprint:
 
 triggers:
   - trigger: device
-    domain: busybar
+    domain: busybar_playground
     device_id: !input busybar_device
     type: switch_busy
 
